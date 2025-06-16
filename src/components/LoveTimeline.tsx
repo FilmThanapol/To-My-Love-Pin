@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, Heart, Gift, Airplane, Cake, Star } from 'lucide-react';
+import { Calendar, Heart, Gift, Plane, Cake, Star } from 'lucide-react';
 
 const LoveTimeline = () => {
   const timelineEvents = [
@@ -36,7 +36,7 @@ const LoveTimeline = () => {
       month: 'May',
       title: 'First Trip',
       description: 'Our weekend getaway to the mountains',
-      icon: Airplane,
+      icon: Plane,
       color: 'from-blue-400 to-cyan-400'
     },
     {

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Heart, Envelope } from 'lucide-react';
+import { Heart, Mail } from 'lucide-react';
 
 const LoveLetter = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +46,7 @@ const LoveLetter = () => {
             <div className={`bg-gradient-to-br from-red-200 to-pink-200 rounded-lg p-8 shadow-2xl transition-all duration-700 ${
               isOpen ? 'opacity-20' : 'opacity-100'
             }`}>
-              <Envelope size={80} className="text-red-400 mx-auto" />
+              <Mail size={80} className="text-red-400 mx-auto" />
               <p className="text-center mt-4 font-medium text-gray-700">Click to open</p>
             </div>
             
