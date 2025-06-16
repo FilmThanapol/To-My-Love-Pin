@@ -10,7 +10,7 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
   const [pin, setPin] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [shake, setShake] = useState(false);
-  const correctPin = '010124'; // January 1st, 2024 format
+  const correctPin = '180724'; // January 1st, 2024 format
   
   const handleNumberClick = (num: string) => {
     if (pin.length < 6) {
@@ -107,7 +107,7 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
         </div>
 
         <p className="text-center text-sm text-gray-500">
-          Hint: Our first date! (MMDDYY)
+          Hint: Our first date! (DDMMYY)
         </p>
       </div>
     </div>
