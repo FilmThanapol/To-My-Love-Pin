@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import PinLockScreen from '../components/PinLockScreen';
+import PinScreen from '../components/PinScreen';
 import PhotoSlideshow from '../components/PhotoSlideshow';
 import LoveTimeline from '../components/LoveTimeline';
 import LoveLetter from '../components/LoveLetter';
@@ -57,7 +57,7 @@ const Index = () => {
   };
 
   if (!isUnlocked) {
-    return <PinLockScreen onUnlock={handleUnlock} />;
+    return <PinScreen onUnlock={handleUnlock} />;
   }
 
   if (showCelebration) {
