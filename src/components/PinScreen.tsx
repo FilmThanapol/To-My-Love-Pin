@@ -58,11 +58,11 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
 
       <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl max-w-sm w-full">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">💕 Our Anniversary 💕</h1>
-          <p className="text-gray-600">Enter our special date</p>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">💕 ครบรอบ 1 ปี 💕</h1>
+          <p className="text-gray-600">ใส่วันที่พิเศษของเรา</p>
           {attempts > 0 && (
             <p className="text-pink-500 mt-2 text-sm">
-              {attempts >= 3 ? "Have you forgotten our special date? 😘" : `Try again... ${3 - attempts} attempts left`}
+              {attempts >= 3 ? "คุณลืมวันพิเศษของเราหรือเปล่า? 😘" : `ลองอีกครั้ง... เหลือ ${3 - attempts} ครั้ง`}
             </p>
           )}
         </div>
@@ -96,7 +96,7 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
             onClick={handleClear}
             className="aspect-square rounded-2xl bg-gradient-to-br from-red-50 to-pink-50 hover:from-red-100 hover:to-pink-100 transition-all duration-200 flex items-center justify-center text-sm font-medium text-red-600 shadow-lg hover:shadow-xl active:scale-95"
           >
-            Clear
+            ลบ
           </button>
           <button
             onClick={() => handleNumberClick('0')}
@@ -107,7 +107,7 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
         </div>
 
         <p className="text-center text-sm text-gray-500">
-          Hint: Our first date! (DDMMYY)
+          คำใบ้: วันแรกที่เราเจอกัน! (DDMMYY)
         </p>
       </div>
     </div>

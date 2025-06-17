@@ -1,84 +1,115 @@
 
 import React, { useState, useEffect } from 'react';
-import { Heart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 
 const PhotoSlideshow = () => {
   const [currentPhoto, setCurrentPhoto] = useState(0);
   
   const photos = [
     {
-      url: 'https://images.unsplash.com/photo-1518621012382-a90797b2d9b4?w=800&h=600&fit=crop',
-      caption: 'Our first date at the coffee shop ☕'
+      url: "/api/placeholder/600/400",
+      caption: "วันแรกที่เราเจอกัน",
+      date: "18 กรกฎาคม 2567"
     },
     {
-      url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&h=600&fit=crop',
-      caption: 'Walking hand in hand through the park 🌸'
+      url: "/api/placeholder/600/400", 
+      caption: "ความทรงจำดีๆ ที่ไม่มีวันลืม",
+      date: "สิงหาคม 2567"
     },
     {
-      url: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800&h=600&fit=crop',
-      caption: 'The flowers you gave me on our 3rd month 💐'
+      url: "/api/placeholder/600/400",
+      caption: "ทริปแรกของเรา",
+      date: "กันยายน 2567"
     },
     {
-      url: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=800&h=600&fit=crop',
-      caption: 'Stargazing on that magical summer night ⭐'
+      url: "/api/placeholder/600/400",
+      caption: "วันที่เราหัวเราะด้วยกันมากที่สุด",
+      date: "ตุลาคม 2567"
     }
   ];
 
+  const nextPhoto = () => {
+    setCurrentPhoto((prev) => (prev + 1) % photos.length);
+  };
+
+  const prevPhoto = () => {
+    setCurrentPhoto((prev) => (prev - 1 + photos.length) % photos.length);
+  };
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentPhoto((prev) => (prev + 1) % photos.length);
-    }, 4000);
+    const timer = setInterval(nextPhoto, 5000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-rose-50 to-pink-100">
-      <div className="max-w-4xl w-full" data-aos="fade-up">
-        <h2 className="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-12">
-          Our Beautiful Journey 📸
+    <section className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-100 py-20 px-4 relative overflow-hidden">
+      {/* Floating Hearts */}
+      {[...Array(10)].map((_, i) => (
+        <Heart
+          key={i}
+          className="absolute text-pink-200 opacity-30 animate-bounce"
+          size={Math.random() * 20 + 15}
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 3}s`,
+            animationDuration: `${4 + Math.random() * 2}s`
+          }}
+        />
+      ))}
+
+      <div className="max-w-4xl mx-auto text-center">
+        <h2 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4 font-thai">
+          ครบรอบ 1 ปี 💕
         </h2>
-        
-        <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-white">
-          <div className="aspect-video relative">
-            {photos.map((photo, index) => (
-              <div
-                key={index}
-                className={`absolute inset-0 transition-all duration-1000 ${
-                  index === currentPhoto 
-                    ? 'opacity-100 scale-100' 
-                    : 'opacity-0 scale-105'
-                }`}
-              >
-                <img
-                  src={photo.url}
-                  alt={photo.caption}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <p className="text-white text-xl md:text-2xl font-medium">
-                    {photo.caption}
-                  </p>
-                </div>
-              </div>
-            ))}
+        <p className="text-xl text-gray-600 mb-12 font-thai">
+          365 วันแห่งความรักและความทรงจำดีๆ
+        </p>
+
+        <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
+          <div className="relative">
+            <img
+              src={photos[currentPhoto].url}
+              alt={photos[currentPhoto].caption}
+              className="w-full h-96 object-cover rounded-2xl shadow-lg transition-all duration-500"
+            />
             
-            {/* Floating Hearts */}
-            <div className="absolute top-4 right-4">
-              <Heart className="text-white animate-pulse" size={32} />
-            </div>
+            {/* Navigation Buttons */}
+            <button
+              onClick={prevPhoto}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+            >
+              <ChevronLeft className="text-gray-700" size={24} />
+            </button>
+            
+            <button
+              onClick={nextPhoto}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+            >
+              <ChevronRight className="text-gray-700" size={24} />
+            </button>
           </div>
-          
-          {/* Dot indicators */}
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-3">
+
+          {/* Photo Info */}
+          <div className="mt-6 space-y-2">
+            <h3 className="text-2xl font-bold text-gray-800 font-thai">
+              {photos[currentPhoto].caption}
+            </h3>
+            <p className="text-gray-500 font-thai">
+              {photos[currentPhoto].date}
+            </p>
+          </div>
+
+          {/* Photo Indicators */}
+          <div className="flex justify-center space-x-2 mt-6">
             {photos.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentPhoto(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === currentPhoto 
-                    ? 'bg-white scale-125' 
-                    : 'bg-white/50 hover:bg-white/75'
+                    ? 'bg-pink-400 scale-125' 
+                    : 'bg-gray-300 hover:bg-gray-400'
                 }`}
               />
             ))}
