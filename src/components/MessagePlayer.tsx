@@ -12,6 +12,7 @@ const MessagePlayer = () => {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [sparkles, setSparkles] = useState<Array<{id: number, x: number, y: number, delay: number}>>([]);
   const [isLoved, setIsLoved] = useState(false);
+  const [imageDimensions, setImageDimensions] = useState<{width: number, height: number, aspectRatio: number} | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const messages = [
@@ -19,19 +20,19 @@ const MessagePlayer = () => {
       title: "ข้อความแรก",
       text: "วันแรกที่เราเจอกัน ฉันรู้เลยว่าเธอคือคนพิเศษ หัวใจฉันเต้นแรงมาก และตอนนี้ครบรอบ 1 ปีแล้ว ฉันยังคิดแบบเดิม",
       audio: "/audio/m1.mp3",
-      image: "/img/1.jpg"
+      image: "/img/pin1.jpg"
     },
     {
       title: "ความทรงจำดีๆ",
       text: "ทุกวันที่ผ่านมากับเธอเป็นความสุขที่ไม่มีวันลืม ขอบคุณที่เป็นคนพิเศษในชีวิตฉัน",
       audio: "/audio/m2.mp3",
-      image: "/img/2.jpg"
+      image: "/img/pin2.jpg"
     },
     {
       title: "สัญญาในอนาคต",
       text: "ฉันสัญญาว่าจะรักเธอตลอดไป และจะสร้างความทรงจำดีๆ ให้กับเราต่อไปเรื่อยๆ",
       audio: "/audio/m3.mp3",
-      image: "/img/2.jpg"
+      image: "/img/pin3.jpg"
     }
   ];
 
@@ -69,6 +70,7 @@ const MessagePlayer = () => {
     setCurrentTrack(index);
     setIsPlaying(false);
     setCurrentTime(0);
+    setImageDimensions(null); // Reset dimensions for new image
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -139,6 +141,69 @@ const MessagePlayer = () => {
     }
   };
 
+  // Smart image dimension handler
+  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = event.currentTarget;
+    const aspectRatio = img.naturalWidth / img.naturalHeight;
+
+    setImageDimensions({
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+      aspectRatio
+    });
+  };
+
+  // Smart sizing based on image characteristics
+  const getImageStyles = () => {
+    if (!imageDimensions) {
+      return {
+        maxWidth: '100%',
+        width: 'auto',
+        height: 'auto',
+        maxHeight: '450px'
+      };
+    }
+
+    const { aspectRatio } = imageDimensions;
+
+    // Portrait images (taller than wide)
+    if (aspectRatio < 0.8) {
+      return {
+        maxWidth: '350px',
+        width: 'auto',
+        height: 'auto',
+        maxHeight: '500px'
+      };
+    }
+    // Square-ish images
+    else if (aspectRatio >= 0.8 && aspectRatio <= 1.2) {
+      return {
+        maxWidth: '400px',
+        width: 'auto',
+        height: 'auto',
+        maxHeight: '400px'
+      };
+    }
+    // Landscape images (wider than tall)
+    else if (aspectRatio > 1.2 && aspectRatio <= 2) {
+      return {
+        maxWidth: '100%',
+        width: 'auto',
+        height: 'auto',
+        maxHeight: '350px'
+      };
+    }
+    // Very wide images (panoramic)
+    else {
+      return {
+        maxWidth: '100%',
+        width: 'auto',
+        height: 'auto',
+        maxHeight: '280px'
+      };
+    }
+  };
+
   return (
     <section className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-20 px-4 relative overflow-hidden">
       {/* Subtle Background Elements */}
@@ -163,7 +228,7 @@ const MessagePlayer = () => {
         ))}
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-purple-600 bg-clip-text text-transparent mb-4 font-thai">
             ข้อความจากใจ 💕
@@ -171,10 +236,10 @@ const MessagePlayer = () => {
           <p className="text-lg text-gray-600 font-thai">เสียงแห่งความรักที่มีให้เธอ</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="grid md:grid-cols-2 gap-8 items-start">
           {/* Elegant Message Content */}
           <div className="space-y-6">
-            <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-rose-100 relative">
+            <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-xl border border-rose-100 relative min-h-fit">
               {/* Subtle love indicator */}
               <div className="absolute top-4 right-4">
                 <button
@@ -190,13 +255,15 @@ const MessagePlayer = () => {
                 </button>
               </div>
 
-              <div className="relative">
+              <div className="relative flex justify-center mb-6">
                 <img
                   src={messages[currentTrack].image}
                   alt="Memory"
-                  className={`w-full h-48 object-cover rounded-2xl mb-6 shadow-lg transition-all duration-300 ${
-                    isPlaying ? 'shadow-xl ring-2 ring-rose-200' : ''
+                  className={`rounded-2xl shadow-lg transition-all duration-500 ${
+                    isPlaying ? 'shadow-xl ring-2 ring-rose-200 scale-105' : ''
                   }`}
+                  style={getImageStyles()}
+                  onLoad={handleImageLoad}
                 />
               </div>
 

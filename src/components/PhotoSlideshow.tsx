@@ -7,22 +7,22 @@ const PhotoSlideshow = () => {
   
   const photos = [
     {
-      url: "/api/placeholder/600/400",
-      caption: "วันแรกที่เราเจอกัน",
-      date: "18 กรกฎาคม 2567"
+      img: "/img/pin1.jpg",
+      caption: "ครั้งแรกที่เค้าถ่ายโพโต้บูธเลยนะ !!",
+      date: "15 มิถุนายน 2568"
     },
     {
-      url: "/api/placeholder/600/400", 
+      img: "/img/pin2.jpg",
       caption: "ความทรงจำดีๆ ที่ไม่มีวันลืม",
       date: "สิงหาคม 2567"
     },
     {
-      url: "/api/placeholder/600/400",
+      img: "/img/pin3.jpg",
       caption: "ทริปแรกของเรา",
       date: "กันยายน 2567"
     },
     {
-      url: "/api/placeholder/600/400",
+      img: "/img/pin4.jpg",
       caption: "วันที่เราหัวเราะด้วยกันมากที่สุด",
       date: "ตุลาคม 2567"
     }
@@ -69,7 +69,7 @@ const PhotoSlideshow = () => {
         <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
           <div className="relative">
             <img
-              src={photos[currentPhoto].url}
+              src={photos[currentPhoto].img}
               alt={photos[currentPhoto].caption}
               className="w-full h-96 object-cover rounded-2xl shadow-lg transition-all duration-500"
             />

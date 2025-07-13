@@ -8,8 +8,12 @@ const JigsawPuzzle = () => {
   const [draggedPiece, setDraggedPiece] = useState<number | null>(null);
   
   const images = [
-    '/img/1.jpg',
-    '/img/2.jpg'
+    '/img/film1.jpg',
+    '/img/film2.jpg',
+    '/img/film3.jpg',
+    '/img/film4.jpg',
+    '/img/pin6.jpg',
+    '/img/pin4.jpg',
   ];
 
   useEffect(() => {
