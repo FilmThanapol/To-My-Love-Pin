@@ -26,7 +26,7 @@ const MessagePlayer = () => {
       title: "ความทรงจำดีๆ",
       text: "ทุกวันที่ผ่านมากับเธอเป็นความสุขที่ไม่มีวันลืม ขอบคุณที่เป็นคนพิเศษในชีวิตฉัน",
       audio: "/audio/m2.mp3",
-      image: "/img/pin2.jpg"
+      image: "/img/pin7.jpg"
     },
     {
       title: "สัญญาในอนาคต",

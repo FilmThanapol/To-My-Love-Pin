@@ -12,12 +12,12 @@ const PhotoSlideshow = () => {
       date: "15 มิถุนายน 2568"
     },
     {
-      img: "/img/pin2.jpg",
+      img: "/img/pin7.jpg",
       caption: "ความทรงจำดีๆ ที่ไม่มีวันลืม",
       date: "สิงหาคม 2567"
     },
     {
-      img: "/img/pin3.jpg",
+      img: "/img/pin5.jpg",
       caption: "ทริปแรกของเรา",
       date: "กันยายน 2567"
     },
