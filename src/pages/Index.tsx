@@ -4,6 +4,7 @@ import PinScreen from '../components/PinScreen';
 import PhotoSlideshow from '../components/PhotoSlideshow';
 import JigsawPuzzle from '../components/JigsawPuzzle';
 import MessagePlayer from '../components/MessagePlayer';
+import VideoMemory from '../components/VideoMemory';
 
 const Index = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -21,7 +22,8 @@ const Index = () => {
       <PhotoSlideshow />
       <JigsawPuzzle />
       <MessagePlayer />
-      
+      <VideoMemory />
+
       {/* Final Section */}
       <section className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center p-4">
         <div className="text-center space-y-8">
