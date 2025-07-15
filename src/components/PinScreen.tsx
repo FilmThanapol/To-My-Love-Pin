@@ -59,7 +59,7 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
       <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl max-w-sm w-full">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">💕 ครบรอบ 1 ปี 💕</h1>
-          <p className="text-gray-600">ใส่วันที่พิเศษของเรา</p>
+          <p className="text-gray-600">ใส่วันที่เราเป็นของกันและกัน</p>
           {attempts > 0 && (
             <p className="text-pink-500 mt-2 text-sm">
               {attempts >= 3 ? "แมวจ๋องลืมอ่อ !!! 😘" : `ลองอีกครั้ง... เหลือ ${3 - attempts} ครั้ง`}
@@ -107,7 +107,7 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
         </div>
 
         <p className="text-center text-sm text-gray-500">
-          คำใบ้: วันแรกที่เราเจอกัน! (DDMMYY)
+          คำใบ้: วันที่เราคบกัน! (DDMMYY)
         </p>
       </div>
     </div>
