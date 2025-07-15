@@ -10,7 +10,7 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
   const [pin, setPin] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [shake, setShake] = useState(false);
-  const correctPin = '180724'; // January 1st, 2024 format
+  const correctPins = ['180724', '180767']; // Multiple valid PINs
   
   const handleNumberClick = (num: string) => {
     if (pin.length < 6) {
@@ -23,7 +23,7 @@ const PinScreen = ({ onUnlock }: PinScreenProps) => {
   };
 
   const handleSubmit = () => {
-    if (pin === correctPin) {
+    if (correctPins.includes(pin)) {
       onUnlock();
     } else {
       setAttempts(prev => prev + 1);
