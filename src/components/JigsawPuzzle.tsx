@@ -160,73 +160,127 @@ const JigsawPuzzle = () => {
   };
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-20 px-4">
-      <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-8 font-thai">
-          จิ๊กซอว์ความทรงจำ 🧩
-        </h2>
-        <p className="text-lg text-gray-600 mb-8 font-thai">
-          ลากชิ้นส่วนเพื่อประกอบภาพความทรงจำของเรา
-        </p>
+    <section className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 py-12 md:py-20 px-4 relative overflow-hidden">
+      {/* Floating puzzle pieces background */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-purple-200 opacity-30 animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 2}s`,
+              fontSize: `${14 + Math.random() * 10}px`,
+              transform: `rotate(${Math.random() * 360}deg)`
+            }}
+          >
+            🧩
+          </div>
+        ))}
+      </div>
 
-        {/* Difficulty Selection */}
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold text-gray-700 mb-4 font-thai">เลือกระดับความยาก:</h3>
-          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-            <button
-              onClick={() => changeDifficulty('easy')}
-              className={`px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all duration-300 font-thai text-sm md:text-base ${
-                selectedDifficulty === 'easy'
-                  ? 'bg-gradient-to-r from-green-400 to-green-500 text-white shadow-lg scale-105'
-                  : 'bg-white text-green-600 border-2 border-green-400 hover:bg-green-50 hover:scale-105'
-              }`}
-            >
-              😊 ง่าย (3×3)
-            </button>
+      <div className="max-w-7xl mx-auto text-center relative z-10">
+        <div className="mb-8 md:mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 font-thai">
+            จิ๊กซอว์ความทรงจำ 🧩
+          </h2>
+          <div className="flex justify-center space-x-2 mb-4">
+            {['🧩', '💕', '🌸', '💖', '🧩'].map((emoji, i) => (
+              <span
+                key={i}
+                className="text-lg md:text-xl animate-bounce"
+                style={{animationDelay: `${i * 0.1}s`}}
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
+          <p className="text-base md:text-lg text-gray-600 font-thai px-4">
+            ลากชิ้นส่วนเพื่อประกอบภาพความทรงจำของเรา
+          </p>
+        </div>
 
-            <button
-              onClick={() => changeDifficulty('medium')}
-              className={`px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all duration-300 font-thai text-sm md:text-base ${
-                selectedDifficulty === 'medium'
-                  ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-lg scale-105'
-                  : 'bg-white text-orange-600 border-2 border-orange-400 hover:bg-orange-50 hover:scale-105'
-              }`}
-            >
-              🤔 ปานกลาง (4×4)
-            </button>
+        {/* Difficulty Selection - Enhanced */}
+        <div className="mb-8 md:mb-12">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-purple-100 mx-2 sm:mx-4">
+            <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 font-thai">🎯 เลือกระดับความยาก:</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+              <button
+                onClick={() => changeDifficulty('easy')}
+                className={`px-4 py-3 md:px-6 md:py-4 rounded-2xl font-semibold transition-all duration-300 font-thai text-sm md:text-base shadow-lg hover:shadow-xl ${
+                  selectedDifficulty === 'easy'
+                    ? 'bg-gradient-to-r from-green-400 to-green-500 text-white scale-105 ring-2 ring-green-300'
+                    : 'bg-white text-green-600 border-2 border-green-400 hover:bg-green-50 hover:scale-105'
+                }`}
+              >
+                <div className="flex flex-col items-center space-y-1">
+                  <span className="text-2xl">😊</span>
+                  <span>ง่าย</span>
+                  <span className="text-xs opacity-80">(3×3 = 9 ชิ้น)</span>
+                </div>
+              </button>
 
-            <button
-              onClick={() => changeDifficulty('difficult')}
-              className={`px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all duration-300 font-thai text-sm md:text-base ${
-                selectedDifficulty === 'difficult'
-                  ? 'bg-gradient-to-r from-red-400 to-red-500 text-white shadow-lg scale-105'
-                  : 'bg-white text-red-600 border-2 border-red-400 hover:bg-red-50 hover:scale-105'
-              }`}
-            >
-              😤 ยาก (6×6)
-            </button>
+              <button
+                onClick={() => changeDifficulty('medium')}
+                className={`px-4 py-3 md:px-6 md:py-4 rounded-2xl font-semibold transition-all duration-300 font-thai text-sm md:text-base shadow-lg hover:shadow-xl ${
+                  selectedDifficulty === 'medium'
+                    ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white scale-105 ring-2 ring-orange-300'
+                    : 'bg-white text-orange-600 border-2 border-orange-400 hover:bg-orange-50 hover:scale-105'
+                }`}
+              >
+                <div className="flex flex-col items-center space-y-1">
+                  <span className="text-2xl">🤔</span>
+                  <span>ปานกลาง</span>
+                  <span className="text-xs opacity-80">(4×4 = 16 ชิ้น)</span>
+                </div>
+              </button>
+
+              <button
+                onClick={() => changeDifficulty('difficult')}
+                className={`px-4 py-3 md:px-6 md:py-4 rounded-2xl font-semibold transition-all duration-300 font-thai text-sm md:text-base shadow-lg hover:shadow-xl ${
+                  selectedDifficulty === 'difficult'
+                    ? 'bg-gradient-to-r from-red-400 to-red-500 text-white scale-105 ring-2 ring-red-300'
+                    : 'bg-white text-red-600 border-2 border-red-400 hover:bg-red-50 hover:scale-105'
+                }`}
+              >
+                <div className="flex flex-col items-center space-y-1">
+                  <span className="text-2xl">😤</span>
+                  <span>ยาก</span>
+                  <span className="text-xs opacity-80">(6×6 = 36 ชิ้น)</span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
         <div className={`relative w-full mx-auto ${isMobile ? 'max-w-sm' : 'max-w-6xl'}`}>
           {isComplete && (
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pink-500/20 rounded-2xl flex items-center justify-center z-20">
-              <div className="bg-white rounded-2xl p-6 shadow-2xl text-center max-w-sm mx-4">
-                <h3 className="text-xl md:text-2xl font-bold text-pink-600 mb-2 font-thai">เสร็จแล้ว! 🎉</h3>
-                <p className="text-gray-600 font-thai mb-2">ความทรงจำที่สวยงาม</p>
-                <p className="text-sm text-gray-500 font-thai mb-4">
-                  ระดับ: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'} ({gridSize}×{gridSize})
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-2xl flex items-center justify-center z-20">
+              <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl text-center max-w-sm mx-4 border border-pink-200">
+                <div className="mb-4">
+                  <div className="text-4xl mb-2">🎉</div>
+                  <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2 font-thai">
+                    เสร็จแล้ว!
+                  </h3>
+                  <p className="text-gray-600 font-thai mb-2">ความทรงจำที่สวยงาม</p>
+                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-2 border border-pink-100">
+                    <p className="text-sm text-gray-600 font-thai">
+                      ระดับ: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'} ({gridSize}×{gridSize})
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     onClick={changeImage}
-                    className="bg-gradient-to-r from-pink-400 to-purple-400 text-white px-4 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 font-thai text-sm"
+                    className="bg-gradient-to-r from-pink-400 to-purple-400 text-white px-5 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm"
                   >
                     ภาพใหม่ 🔄
                   </button>
                   <button
                     onClick={() => changeDifficulty(selectedDifficulty)}
-                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-4 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 font-thai text-sm"
+                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-5 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm"
                   >
                     เล่นอีกครั้ง 🎮
                   </button>
@@ -236,8 +290,8 @@ const JigsawPuzzle = () => {
           )}
 
           <div
-            className={`relative w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-inner overflow-visible ${
-              isMobile ? 'h-[500px]' : 'h-96'
+            className={`relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-100 rounded-3xl shadow-inner overflow-visible border border-gray-200 ${
+              isMobile ? 'h-[500px] sm:h-[600px]' : 'h-96 md:h-[500px]'
             }`}
             onMouseMove={handleMove}
             onMouseUp={handleEnd}
@@ -246,8 +300,8 @@ const JigsawPuzzle = () => {
             onTouchEnd={handleEnd}
           >
             {/* Puzzle frame - centered in the container */}
-            <div className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl overflow-hidden ${
-              isMobile ? 'w-60 h-60' : 'w-80 h-80'
+            <div className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-purple-100 ${
+              isMobile ? 'w-60 h-60 sm:w-72 sm:h-72' : 'w-80 h-80 md:w-96 md:h-96'
             }`}>
               {/* Puzzle grid background */}
               <div
@@ -259,9 +313,15 @@ const JigsawPuzzle = () => {
                 }}
               >
                 {[...Array(gridSize * gridSize)].map((_, i) => (
-                  <div key={i} className="border-2 border-dashed border-gray-300 rounded-lg"></div>
+                  <div key={i} className="border-2 border-dashed border-purple-200 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 opacity-50"></div>
                 ))}
               </div>
+
+              {/* Frame decoration */}
+              <div className="absolute -top-2 -left-2 text-purple-400 text-xl">🧩</div>
+              <div className="absolute -top-2 -right-2 text-pink-400 text-xl">💕</div>
+              <div className="absolute -bottom-2 -left-2 text-pink-400 text-xl">💖</div>
+              <div className="absolute -bottom-2 -right-2 text-purple-400 text-xl">🧩</div>
             </div>
 
             {/* Puzzle pieces - positioned relative to the entire container */}
@@ -296,24 +356,45 @@ const JigsawPuzzle = () => {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center space-y-4">
-          <div className="text-center">
-            <p className="text-sm text-gray-600 font-thai mb-2">
-              ระดับปัจจุบัน: <span className="font-semibold">
-                {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'}
-              </span> ({gridSize}×{gridSize} = {gridSize * gridSize} ชิ้น)
-            </p>
-            <p className="text-xs text-gray-500 font-thai">
-              {isMobile ? 'แตะและลากชิ้นส่วนเข้าที่' : 'คลิกและลากชิ้นส่วนเข้าที่'}
+        <div className="mt-8 md:mt-12 flex flex-col items-center space-y-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-purple-100 text-center max-w-md mx-4">
+            <div className="mb-3">
+              <p className="text-sm md:text-base text-gray-700 font-thai mb-2">
+                🎯 ระดับปัจจุบัน: <span className="font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'}
+                </span>
+              </p>
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-2 border border-purple-100">
+                <p className="text-xs md:text-sm text-gray-600 font-thai">
+                  {gridSize}×{gridSize} = {gridSize * gridSize} ชิ้น
+                </p>
+              </div>
+            </div>
+            <p className="text-xs md:text-sm text-gray-500 font-thai">
+              {isMobile ? '👆 แตะและลากชิ้นส่วนเข้าที่' : '🖱️ คลิกและลากชิ้นส่วนเข้าที่'}
             </p>
           </div>
 
-          <button
-            onClick={changeImage}
-            className="bg-gradient-to-r from-pink-400 to-purple-400 text-white px-6 md:px-8 py-2 md:py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base"
-          >
-            เปลี่ยนภาพใหม่ 🔄
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 items-center">
+            <button
+              onClick={changeImage}
+              className="bg-gradient-to-r from-pink-400 to-purple-400 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base"
+            >
+              เปลี่ยนภาพใหม่ 🔄
+            </button>
+
+            <div className="flex space-x-2">
+              {['🧩', '💕', '🌸'].map((emoji, i) => (
+                <span
+                  key={i}
+                  className="text-lg animate-pulse opacity-60"
+                  style={{animationDelay: `${i * 0.3}s`}}
+                >
+                  {emoji}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

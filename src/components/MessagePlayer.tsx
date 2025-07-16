@@ -228,17 +228,28 @@ const MessagePlayer = () => {
         ))}
       </div>
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-600 to-purple-600 bg-clip-text text-transparent mb-4 font-thai">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-rose-600 to-purple-600 bg-clip-text text-transparent mb-4 font-thai">
             ข้อความจากใจ 💕
           </h2>
-          <p className="text-lg text-gray-600 font-thai">เสียงแห่งความรักที่มีให้เธอ</p>
+          <div className="flex justify-center space-x-2 mb-4">
+            {['🎵', '💖', '🎶', '💕', '🎵'].map((emoji, i) => (
+              <span
+                key={i}
+                className="text-lg md:text-xl animate-bounce"
+                style={{animationDelay: `${i * 0.1}s`}}
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
+          <p className="text-base md:text-lg text-gray-600 font-thai px-4">เสียงแห่งความรักที่มีให้เธอ</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-start">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-start">
           {/* Elegant Message Content */}
-          <div className="space-y-6">
+          <div className="space-y-6 order-2 lg:order-1">
             <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-xl border border-rose-100 relative min-h-fit">
               {/* Subtle love indicator */}
               <div className="absolute top-4 right-4">
@@ -306,14 +317,14 @@ const MessagePlayer = () => {
             </div>
           </div>
 
-          {/* Elegant Audio Player */}
-          <div className="space-y-6">
-            <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-purple-100 relative">
-              <div className="text-center mb-6">
-                <h4 className="text-2xl font-bold text-gray-800 mb-2 font-thai">
+          {/* Elegant Audio Player - Enhanced */}
+          <div className="space-y-6 order-1 lg:order-2">
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl border border-purple-100 relative">
+              <div className="text-center mb-4 md:mb-6">
+                <h4 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-rose-600 to-purple-600 bg-clip-text text-transparent mb-2 font-thai">
                   เสียงจากใจ 🎵
                 </h4>
-                <div className="w-16 h-1 bg-gradient-to-r from-rose-400 to-purple-400 rounded-full mx-auto"></div>
+                <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-rose-400 to-purple-400 rounded-full mx-auto"></div>
               </div>
 
               {/* Elegant Current Track Display */}
@@ -350,8 +361,8 @@ const MessagePlayer = () => {
                 </div>
               </div>
 
-              {/* Magical Play Controls */}
-              <div className="flex items-center justify-center space-x-8 mb-8">
+              {/* Magical Play Controls - Responsive */}
+              <div className="flex items-center justify-center space-x-4 sm:space-x-6 md:space-x-8 mb-6 md:mb-8">
                 <button
                   onClick={prevTrack}
                   className="bg-gradient-to-r from-pink-200 to-purple-200 hover:from-pink-300 hover:to-purple-300 text-gray-700 p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-125 group relative overflow-hidden"
@@ -415,21 +426,21 @@ const MessagePlayer = () => {
                 </button>
               </div>
 
-              {/* Cute Volume Controls */}
-              <div className="flex items-center justify-center space-x-4 mb-8">
+              {/* Cute Volume Controls - Responsive */}
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6 md:mb-8">
                 <button
                   onClick={() => setShowVolumeSlider(!showVolumeSlider)}
                   className="bg-gradient-to-r from-cyan-100 to-blue-100 hover:from-cyan-200 hover:to-blue-200 text-gray-700 p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
                 >
                   {React.createElement(getVolumeIcon(), {
-                    size: 20,
+                    size: 18,
                     className: `transition-all duration-300 ${showVolumeSlider ? 'text-blue-600' : 'group-hover:text-blue-600'}`
                   })}
                 </button>
 
                 {showVolumeSlider && (
-                  <div className="flex items-center space-x-3 bg-gradient-to-r from-white to-cyan-50 rounded-full px-6 py-3 shadow-xl animate-fadeIn border border-cyan-200">
-                    <Heart className="text-cyan-400" size={16} />
+                  <div className="flex items-center space-x-2 sm:space-x-3 bg-gradient-to-r from-white to-cyan-50 rounded-full px-4 sm:px-6 py-2 sm:py-3 shadow-xl animate-fadeIn border border-cyan-200">
+                    <Heart className="text-cyan-400" size={14} />
                     <input
                       type="range"
                       min="0"
@@ -437,13 +448,13 @@ const MessagePlayer = () => {
                       step="0.1"
                       value={volume}
                       onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                      className="w-24 h-2 bg-gradient-to-r from-cyan-200 to-blue-200 rounded-lg appearance-none cursor-pointer slider"
+                      className="w-20 sm:w-24 h-2 bg-gradient-to-r from-cyan-200 to-blue-200 rounded-lg appearance-none cursor-pointer slider"
                     />
                     <div className="flex items-center space-x-1">
                       <span className="text-xs text-gray-600 font-mono font-bold bg-cyan-100 px-2 py-1 rounded-full">
                         {Math.round(volume * 100)}%
                       </span>
-                      <Sparkles className="text-cyan-400" size={12} />
+                      <Sparkles className="text-cyan-400" size={10} />
                     </div>
                   </div>
                 )}

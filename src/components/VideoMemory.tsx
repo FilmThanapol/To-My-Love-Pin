@@ -116,22 +116,39 @@ const VideoMemory = () => {
     <section className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-rose-50 py-12 px-4 relative overflow-hidden">
       {/* Floating background hearts */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(15)].map((_, i) => (
+        {[...Array(20)].map((_, i) => (
           <Heart
             key={i}
-            className="absolute text-pink-200 animate-pulse opacity-30"
-            size={Math.random() * 20 + 10}
+            className="absolute text-pink-200 animate-pulse opacity-40"
+            size={Math.random() * 25 + 12}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 4}s`,
+              animationDuration: `${Math.random() * 3 + 2}s`
+            }}
+          />
+        ))}
+
+        {/* Video-themed floating elements */}
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={`video-${i}`}
+            className="absolute text-purple-200 opacity-30 animate-bounce"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${Math.random() * 2 + 2}s`
+              animationDuration: `${2 + Math.random() * 2}s`,
+              fontSize: `${12 + Math.random() * 8}px`
             }}
-          />
+          >
+            🎬
+          </div>
         ))}
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-5xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 font-thai flex flex-wrap items-center justify-center gap-2">
@@ -150,8 +167,8 @@ const VideoMemory = () => {
           </div>
         </div>
 
-        {/* Video Container */}
-        <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-2xl border border-pink-100">
+        {/* Video Container - Enhanced */}
+        <div className="relative bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl border border-pink-100 mx-2 sm:mx-4">
           {/* Love Button */}
           <button
             onClick={handleLove}
@@ -179,15 +196,15 @@ const VideoMemory = () => {
             />
           ))}
 
-          {/* Video Player */}
-          <div 
+          {/* Video Player - Responsive */}
+          <div
             className="relative rounded-2xl overflow-hidden shadow-lg group"
             onMouseEnter={() => setShowControls(true)}
             onMouseLeave={() => setShowControls(false)}
           >
             <video
               ref={videoRef}
-              className="w-full h-auto max-h-[70vh] object-contain bg-black"
+              className="w-full h-auto max-h-[60vh] sm:max-h-[70vh] md:max-h-[75vh] object-contain bg-black"
               onClick={togglePlay}
             >
               <source src="/vdo/eiei.mp4" type="video/mp4" />
@@ -198,24 +215,24 @@ const VideoMemory = () => {
             <div className={`absolute inset-0 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
               showControls ? 'opacity-100' : 'opacity-0'
             }`}>
-              {/* Play/Pause Button Center */}
+              {/* Play/Pause Button Center - Responsive */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <button
                   onClick={togglePlay}
-                  className="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all duration-300 hover:scale-110"
+                  className="bg-white/20 backdrop-blur-sm rounded-full p-3 sm:p-4 hover:bg-white/30 transition-all duration-300 hover:scale-110 active:scale-95"
                 >
                   {isPlaying ? (
-                    <Pause className="text-white" size={32} />
+                    <Pause className="text-white" size={window.innerWidth < 640 ? 28 : 32} />
                   ) : (
-                    <Play className="text-white ml-1" size={32} />
+                    <Play className="text-white ml-1" size={window.innerWidth < 640 ? 28 : 32} />
                   )}
                 </button>
               </div>
 
-              {/* Bottom Controls */}
-              <div className="absolute bottom-0 left-0 right-0 p-4">
+              {/* Bottom Controls - Responsive */}
+              <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
                 {/* Progress Bar */}
-                <div className="mb-4">
+                <div className="mb-3 sm:mb-4">
                   <input
                     type="range"
                     min="0"
@@ -226,29 +243,29 @@ const VideoMemory = () => {
                   />
                 </div>
 
-                {/* Control Buttons */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
+                {/* Control Buttons - Responsive Layout */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
+                  <div className="flex items-center space-x-3 sm:space-x-4">
                     <button
                       onClick={togglePlay}
-                      className="text-white hover:text-pink-300 transition-colors duration-300"
+                      className="text-white hover:text-pink-300 transition-colors duration-300 p-1"
                     >
-                      {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                      {isPlaying ? <Pause size={18} /> : <Play size={18} />}
                     </button>
-                    
+
                     <button
                       onClick={restartVideo}
-                      className="text-white hover:text-pink-300 transition-colors duration-300"
+                      className="text-white hover:text-pink-300 transition-colors duration-300 p-1"
                     >
-                      <RotateCcw size={20} />
+                      <RotateCcw size={18} />
                     </button>
 
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={toggleMute}
-                        className="text-white hover:text-pink-300 transition-colors duration-300"
+                        className="text-white hover:text-pink-300 transition-colors duration-300 p-1"
                       >
-                        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                        {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                       </button>
                       <input
                         type="range"
@@ -256,12 +273,12 @@ const VideoMemory = () => {
                         max="100"
                         value={isMuted ? 0 : volume * 100}
                         onChange={handleVolumeChange}
-                        className="w-20 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer slider"
+                        className="w-16 sm:w-20 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer slider"
                       />
                     </div>
                   </div>
 
-                  <div className="text-white text-sm font-mono">
+                  <div className="text-white text-xs sm:text-sm font-mono bg-black/20 px-2 py-1 rounded">
                     {formatTime(currentTime)} / {formatTime(duration)}
                   </div>
                 </div>
@@ -269,14 +286,27 @@ const VideoMemory = () => {
             </div>
           </div>
 
-          {/* Video Info */}
-          <div className="mt-6 text-center">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2 font-thai">
-              ช่วงเวลาแห่งความสุข
-            </h3>
-            <p className="text-gray-600 font-thai leading-relaxed">
-              หวังว่าจะถูกใจนะคะที่รัก 💕
-            </p>
+          {/* Video Info - Responsive */}
+          <div className="mt-4 sm:mt-6 text-center">
+            <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-4 sm:p-6 border border-pink-100">
+              <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2 font-thai">
+                ช่วงเวลาแห่งความสุข
+              </h3>
+              <div className="flex justify-center space-x-2 mb-3">
+                {['🎬', '💕', '🌸', '💖', '🎬'].map((emoji, i) => (
+                  <span
+                    key={i}
+                    className="text-lg animate-pulse opacity-70"
+                    style={{animationDelay: `${i * 0.2}s`}}
+                  >
+                    {emoji}
+                  </span>
+                ))}
+              </div>
+              <p className="text-sm sm:text-base text-gray-600 font-thai leading-relaxed">
+                หวังว่าจะถูกใจนะคะที่รัก 💕
+              </p>
+            </div>
           </div>
         </div>
       </div>

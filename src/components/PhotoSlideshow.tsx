@@ -4,6 +4,8 @@ import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 
 const PhotoSlideshow = () => {
   const [currentPhoto, setCurrentPhoto] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
   
   const photos = [
     {
@@ -36,83 +38,159 @@ const PhotoSlideshow = () => {
     setCurrentPhoto((prev) => (prev - 1 + photos.length) % photos.length);
   };
 
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      nextPhoto();
+    } else if (isRightSwipe) {
+      prevPhoto();
+    }
+  };
+
   useEffect(() => {
     const timer = setInterval(nextPhoto, 5000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-100 py-20 px-4 relative overflow-hidden">
-      {/* Floating Hearts */}
-      {[...Array(10)].map((_, i) => (
+    <section className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-100 py-12 md:py-20 px-4 relative overflow-hidden">
+      {/* Enhanced Floating Elements */}
+      {[...Array(15)].map((_, i) => (
         <Heart
           key={i}
-          className="absolute text-pink-200 opacity-30 animate-bounce"
-          size={Math.random() * 20 + 15}
+          className="absolute text-pink-200 opacity-40 animate-pulse"
+          size={Math.random() * 25 + 12}
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 3}s`,
-            animationDuration: `${4 + Math.random() * 2}s`
+            animationDelay: `${Math.random() * 4}s`,
+            animationDuration: `${3 + Math.random() * 2}s`
           }}
         />
       ))}
 
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4 font-thai">
-          ครบรอบ 1 ปี 💕
-        </h2>
-        <p className="text-xl text-gray-600 mb-12 font-thai">
-          365 วันแห่งความรักและความทรงจำดีๆ กับแมวจ๋อง 🐱
-        </p>
+      {/* Sparkle Effects */}
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={`sparkle-${i}`}
+          className="absolute text-yellow-300 opacity-50 animate-ping"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 3}s`,
+            animationDuration: `${2 + Math.random() * 2}s`,
+            fontSize: `${10 + Math.random() * 6}px`
+          }}
+        >
+          ✨
+        </div>
+      ))}
 
-        <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
-          <div className="relative">
+      <div className="max-w-5xl mx-auto text-center relative z-10">
+        <div className="mb-8 md:mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4 font-thai">
+            ครบรอบ 1 ปี 💕
+          </h2>
+          <div className="flex justify-center space-x-2 mb-4">
+            {['🌸', '💖', '🌺', '💕', '🌸'].map((emoji, i) => (
+              <span
+                key={i}
+                className="text-lg md:text-xl animate-bounce"
+                style={{animationDelay: `${i * 0.1}s`}}
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 font-thai px-4">
+            365 วันแห่งความรักและความทรงจำดีๆ กับแมวจ๋อง 🐱
+          </p>
+        </div>
+
+        <div className="relative bg-white/90 backdrop-blur-md rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl border border-pink-100 mx-2 sm:mx-4">
+          <div className="relative group">
             <img
               src={photos[currentPhoto].img}
               alt={photos[currentPhoto].caption}
-              className="w-full h-96 object-cover rounded-2xl shadow-lg transition-all duration-500"
+              className="w-full h-64 sm:h-80 md:h-96 lg:h-[28rem] object-cover rounded-2xl shadow-lg transition-all duration-500 hover:shadow-xl"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             />
-            
-            {/* Navigation Buttons */}
+
+            {/* Navigation Buttons - More responsive */}
             <button
               onClick={prevPhoto}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+              className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 opacity-80 group-hover:opacity-100"
             >
-              <ChevronLeft className="text-gray-700" size={24} />
+              <ChevronLeft className="text-gray-700" size={20} />
             </button>
-            
+
             <button
               onClick={nextPhoto}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+              className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 opacity-80 group-hover:opacity-100"
             >
-              <ChevronRight className="text-gray-700" size={24} />
+              <ChevronRight className="text-gray-700" size={20} />
             </button>
+
+            {/* Mobile swipe indicator */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/20 backdrop-blur-sm rounded-full px-3 py-1 text-white text-xs opacity-60 sm:hidden">
+              👈 เลื่อนดูภาพ 👉
+            </div>
           </div>
 
           {/* Photo Info */}
-          <div className="mt-6 space-y-2">
-            <h3 className="text-2xl font-bold text-gray-800 font-thai">
-              {photos[currentPhoto].caption}
-            </h3>
-            {/* <p className="text-gray-500 font-thai">
-              {photos[currentPhoto].date}
-            </p> */}
+          <div className="mt-4 sm:mt-6 space-y-2 px-2">
+            <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-3 sm:p-4 border border-pink-100">
+              <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 font-thai leading-relaxed">
+                {photos[currentPhoto].caption}
+              </h3>
+            </div>
           </div>
 
-          {/* Photo Indicators */}
-          <div className="flex justify-center space-x-2 mt-6">
+          {/* Photo Indicators - Enhanced */}
+          <div className="flex justify-center space-x-3 mt-4 sm:mt-6">
             {photos.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentPhoto(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentPhoto 
-                    ? 'bg-pink-400 scale-125' 
-                    : 'bg-gray-300 hover:bg-gray-400'
+                className={`relative transition-all duration-300 ${
+                  index === currentPhoto
+                    ? 'scale-125'
+                    : 'hover:scale-110'
                 }`}
-              />
+              >
+                <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-300 ${
+                  index === currentPhoto
+                    ? 'bg-gradient-to-r from-pink-400 to-purple-400 shadow-lg'
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`} />
+                {index === currentPhoto && (
+                  <div className="absolute inset-0 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white/30 animate-pulse" />
+                )}
+              </button>
             ))}
+          </div>
+
+          {/* Progress indicator */}
+          <div className="mt-4 text-center">
+            <span className="text-xs sm:text-sm text-gray-500 font-thai">
+              {currentPhoto + 1} / {photos.length} 📸
+            </span>
           </div>
         </div>
       </div>
