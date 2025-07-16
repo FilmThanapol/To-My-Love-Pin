@@ -11,9 +11,40 @@ const JigsawPuzzle = () => {
   const [gridSize, setGridSize] = useState(3);
   const [isMobile, setIsMobile] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'difficult'>('easy');
+  const [showMagicalReveal, setShowMagicalReveal] = useState(false);
 
   // Throttling for mobile performance
   const lastMoveTime = useRef(0);
+
+  // Cheerful completion sound
+  const playCompletionSound = useCallback(() => {
+    try {
+      // Create a simple cheerful melody using Web Audio API
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+
+      notes.forEach((frequency, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1 + index * 0.2);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5 + index * 0.2);
+
+        oscillator.start(audioContext.currentTime + index * 0.2);
+        oscillator.stop(audioContext.currentTime + 0.5 + index * 0.2);
+      });
+    } catch (error) {
+      // Fallback: no sound if Web Audio API is not supported
+      console.log('Audio not supported');
+    }
+  }, []);
 
   // Popup lock functionality
   const { isOpen: isHelpOpen, openPopup: openHelp, closePopup: closeHelp } = usePopupLock();
@@ -133,6 +164,7 @@ const JigsawPuzzle = () => {
           );
 
           if (distance < (isMobile ? 30 : 50)) {
+            console.log(`✅ Piece ${piece.id} placed! Distance: ${distance}`);
             // Snap to exact position
             return {
               ...piece,
@@ -140,6 +172,8 @@ const JigsawPuzzle = () => {
               y: piece.correctY + (isMobile ? 120 : 100) - frameOffset,
               placed: true
             };
+          } else {
+            console.log(`❌ Piece ${piece.id} not close enough. Distance: ${distance}, threshold: ${isMobile ? 30 : 50}`);
           }
         }
         return piece;
@@ -152,10 +186,32 @@ const JigsawPuzzle = () => {
   useEffect(() => {
     const totalPieces = gridSize * gridSize;
     const placedPieces = pieces.filter(piece => piece.placed).length;
-    if (placedPieces === totalPieces && pieces.length === totalPieces) {
-      setIsComplete(true);
+
+    // Debug logging
+    console.log('Completion check:', {
+      totalPieces,
+      placedPieces,
+      piecesLength: pieces.length,
+      isComplete,
+      showMagicalReveal,
+      pieces: pieces.map(p => ({ id: p.id, placed: p.placed }))
+    });
+
+    if (placedPieces === totalPieces && pieces.length === totalPieces && !isComplete && !showMagicalReveal) {
+      console.log('🎉 PUZZLE COMPLETED! Triggering magical reveal...');
+      // Trigger magical reveal sequence
+      setShowMagicalReveal(true);
+
+      // Play cheerful completion sound
+      playCompletionSound();
+
+      // After magical reveal, show completion popup
+      setTimeout(() => {
+        setIsComplete(true);
+        setShowMagicalReveal(false);
+      }, 3000); // 3 seconds for the magical reveal
     }
-  }, [pieces, gridSize]);
+  }, [pieces, gridSize, isComplete, showMagicalReveal]);
 
   // Cleanup effect
   useEffect(() => {
@@ -171,6 +227,7 @@ const JigsawPuzzle = () => {
     setSelectedDifficulty(difficulty);
     setGridSize(newGridSize);
     setIsComplete(false);
+    setShowMagicalReveal(false);
 
     // Reinitialize puzzle with new grid size
     initializePuzzle(newGridSize);
@@ -185,6 +242,7 @@ const JigsawPuzzle = () => {
 
     setSelectedImage(newImage);
     setIsComplete(false);
+    setShowMagicalReveal(false);
 
     // Keep current difficulty level
     initializePuzzle(gridSize);
@@ -287,6 +345,80 @@ const JigsawPuzzle = () => {
         </div>
 
         <div className={`relative w-full mx-auto ${isMobile ? 'max-w-sm' : 'max-w-6xl'}`}>
+          {/* Magical Reveal Overlay */}
+          {showMagicalReveal && (
+            <div className="fixed inset-0 bg-gradient-to-br from-purple-900/90 via-pink-900/90 to-indigo-900/90 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+              {/* Twinkling Stars Background */}
+              <div className="absolute inset-0 overflow-hidden">
+                {[...Array(50)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute animate-twinkle"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 3}s`,
+                      animationDuration: `${2 + Math.random() * 2}s`
+                    }}
+                  >
+                    ✨
+                  </div>
+                ))}
+              </div>
+
+              {/* Magical Sparkle Effects */}
+              <div className="absolute inset-0 overflow-hidden">
+                {[...Array(30)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute animate-sparkle"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 2}s`,
+                      fontSize: `${0.8 + Math.random() * 1.2}rem`
+                    }}
+                  >
+                    💫
+                  </div>
+                ))}
+              </div>
+
+              {/* Main Reveal Container */}
+              <div className="relative z-10 text-center">
+                {/* Seamless Completed Image */}
+                <div className="relative mb-8">
+                  <div className="w-80 h-80 md:w-96 md:h-96 mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white/30 animate-magicalGrow">
+                    <img
+                      src={selectedImage}
+                      alt="Completed Puzzle"
+                      className="w-full h-full object-cover animate-gentleFadeIn"
+                    />
+                  </div>
+
+                  {/* Magical Glow Effect */}
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-yellow-400/20 animate-pulse"></div>
+
+                  {/* Floating Hearts */}
+                  <div className="absolute -top-4 -left-4 text-4xl animate-float">💖</div>
+                  <div className="absolute -top-4 -right-4 text-4xl animate-float" style={{animationDelay: '0.5s'}}>💝</div>
+                  <div className="absolute -bottom-4 -left-4 text-4xl animate-float" style={{animationDelay: '1s'}}>🌟</div>
+                  <div className="absolute -bottom-4 -right-4 text-4xl animate-float" style={{animationDelay: '1.5s'}}>✨</div>
+                </div>
+
+                {/* Magical Text */}
+                <div className="text-white text-center animate-slideInUp" style={{animationDelay: '1s'}}>
+                  <h2 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 bg-clip-text text-transparent animate-shimmer font-thai">
+                    ✨ เสร็จสิ้นแล้ว! ✨
+                  </h2>
+                  <p className="text-xl md:text-2xl text-purple-100 font-thai animate-slideInUp" style={{animationDelay: '1.5s'}}>
+                    ความทรงจำที่สวยงาม 💖
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {isComplete && (
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
               <div className="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full mx-4 text-center shadow-2xl border-4 border-purple-200 animate-scaleIn">
