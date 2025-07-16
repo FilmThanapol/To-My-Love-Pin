@@ -443,72 +443,195 @@ const JigsawPuzzle = () => {
           )}
 
           {showCelebration && (
-            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-              <div className="bg-gradient-to-br from-purple-50 via-white to-pink-50 rounded-3xl p-6 md:p-8 max-w-lg w-full mx-4 text-center shadow-2xl border-4 border-purple-200 animate-scaleIn relative overflow-hidden">
+            <div className="fixed inset-0 bg-gradient-to-br from-black/80 via-purple-900/40 to-pink-900/40 backdrop-blur-md z-50 animate-fadeIn overflow-y-auto">
+              <div className="min-h-screen flex items-center justify-center p-4 py-8">
+                <div className="bg-gradient-to-br from-white/95 via-purple-50/90 to-pink-50/90 backdrop-blur-sm rounded-3xl p-8 md:p-10 max-w-md w-full mx-auto text-center shadow-2xl border-2 border-white/60 animate-scaleIn relative overflow-hidden my-auto">
 
-                {/* Close Button */}
+                {/* Animated Background Pattern */}
+                <div className="absolute inset-0 opacity-20">
+                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-200/50 to-pink-200/50 rounded-3xl"></div>
+                  <div className="absolute top-6 left-6 w-8 h-8 bg-purple-300/60 rounded-full animate-ping"></div>
+                  <div className="absolute bottom-6 right-6 w-6 h-6 bg-pink-300/60 rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
+                  <div className="absolute top-1/2 right-8 w-4 h-4 bg-yellow-300/60 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
+                </div>
+
+                {/* Enhanced Close Button */}
                 <button
                   onClick={() => {
                     setShowCelebration(false);
                     setShowSeamlessImage(false);
                     setShowMagicalReveal(false);
                   }}
-                  className="absolute top-4 right-4 w-8 h-8 bg-gray-600 hover:bg-gray-700 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg z-10"
+                  className="absolute top-4 right-4 w-12 h-12 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all duration-300 transform hover:scale-110 hover:rotate-90 shadow-lg hover:shadow-xl z-20 border border-gray-200/50"
                   aria-label="Close popup"
                 >
-                  <span className="text-sm font-bold">✕</span>
+                  <span className="text-lg font-bold">✕</span>
                 </button>
-                {/* Completed Image Display */}
-                <div className="mb-6 relative">
-                  <div className="w-full max-w-sm mx-auto aspect-square rounded-2xl overflow-hidden shadow-xl border-4 border-purple-100 animate-fadeInScale">
+                {/* Enhanced Completed Image Display */}
+                <div className="mb-8 relative">
+                  {/* Glow effect behind image */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400/30 via-pink-400/30 to-purple-400/30 rounded-3xl blur-xl scale-110 animate-pulse"></div>
+
+                  <div className="relative w-full max-w-xs mx-auto aspect-square rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 animate-fadeInScale">
                     <img
                       src={selectedImage}
                       alt="Completed Puzzle"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
+                    {/* Image overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/10 pointer-events-none"></div>
                   </div>
-                  <div className="absolute -top-5 -right-2 text-4xl animate-bounce">🎉</div>
-                  <div className="absolute -top-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.2s'}}>✨</div>
-                  <div className="absolute -bottom-2 -right-2 text-4xl animate-bounce" style={{animationDelay: '0.4s'}}>🎊</div>
-                  <div className="absolute -bottom-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.6s'}}>🧩</div>
 
-                  {/* Extra floating decorations */}
-                  <div className="absolute top-1/2 -left-8 text-2xl animate-float">💖</div>
-                  <div className="absolute top-1/2 -right-8 text-2xl animate-float" style={{animationDelay: '0.8s'}}>💝</div>
+                  {/* Enhanced floating decorations with better positioning */}
+                  <div className="absolute -top-6 -right-3 text-5xl animate-bounce filter drop-shadow-lg">
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎉</span>
+                  </div>
+                  <div className="absolute -top-4 -left-3 text-5xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '0.2s'}}>
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>✨</span>
+                  </div>
+                  <div className="absolute -bottom-4 -right-3 text-5xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '0.4s'}}>
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎊</span>
+                  </div>
+                  <div className="absolute -bottom-6 -left-3 text-5xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '0.6s'}}>
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🧩</span>
+                  </div>
+
+                  {/* Side floating hearts with better animation */}
+                  <div className="absolute top-1/2 -left-10 text-3xl animate-float filter drop-shadow-lg">
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>💖</span>
+                  </div>
+                  <div className="absolute top-1/2 -right-10 text-3xl animate-float filter drop-shadow-lg" style={{animationDelay: '0.8s'}}>
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>💝</span>
+                  </div>
+
+                  {/* Additional sparkle effects */}
+                  <div className="absolute top-1/4 -left-6 text-2xl animate-pulse" style={{animationDelay: '1s'}}>
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>⭐</span>
+                  </div>
+                  <div className="absolute top-3/4 -right-6 text-2xl animate-pulse" style={{animationDelay: '1.2s'}}>
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🌟</span>
+                  </div>
                 </div>
 
-                {/* Floating sparkles */}
-                <div className="absolute top-4 left-4 text-2xl animate-bounce">✨</div>
-                <div className="absolute top-4 right-4 text-2xl animate-bounce" style={{animationDelay: '0.3s'}}>🎊</div>
-                <div className="absolute bottom-4 left-4 text-2xl animate-bounce" style={{animationDelay: '0.6s'}}>💫</div>
-                <div className="absolute bottom-4 right-4 text-2xl animate-bounce" style={{animationDelay: '0.9s'}}>🎉</div>
+                {/* Enhanced Floating Sparkles */}
+                <div className="absolute top-6 left-6 text-3xl animate-bounce filter drop-shadow-lg">
+                  <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>✨</span>
+                </div>
+                <div className="absolute top-8 right-16 text-2xl animate-pulse filter drop-shadow-lg" style={{animationDelay: '0.3s'}}>
+                  <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎊</span>
+                </div>
+                <div className="absolute bottom-8 left-8 text-2xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '0.6s'}}>
+                  <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>💫</span>
+                </div>
+                <div className="absolute bottom-6 right-6 text-3xl animate-pulse filter drop-shadow-lg" style={{animationDelay: '0.9s'}}>
+                  <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎉</span>
+                </div>
+                <div className="absolute top-1/2 left-4 text-xl animate-bounce filter drop-shadow-lg" style={{animationDelay: '1.2s'}}>
+                  <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🌈</span>
+                </div>
+                <div className="absolute top-1/3 right-4 text-xl animate-pulse filter drop-shadow-lg" style={{animationDelay: '1.5s'}}>�</div>
 
-                <div className="text-6xl md:text-8xl mb-4 animate-pulse">🏆</div>
-                <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-4 animate-slideInUp font-thai">
-                  🎉 เยี่ยมมาก! เสร็จแล้ว! 🎉
-                </h2>
-                <p className="text-gray-600 mb-6 text-sm md:text-base animate-slideInUp font-thai" style={{animationDelay: '0.2s'}}>
-                  เก่งมากเลยนะคะ! 😸 ประกอบจิ๊กซอว์ {gridSize}×{gridSize} ชิ้นสำเร็จแล้ว! 🧩✨<br/>
-                  <span className="text-purple-500 font-semibold">
-                    ระดับความยาก: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'}
-                  </span><br/>
-                  <span className="text-pink-500 text-xs md:text-sm">
-                    ความทรงจำสวยงามของเราเสร็จสมบูรณ์แล้ว 💕
-                  </span>
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slideInUp" style={{animationDelay: '0.4s'}}>
+                {/* Enhanced Trophy with Glow Effect */}
+                <div className="mb-6 relative">
+                  <div className="absolute inset-0 bg-yellow-400/40 rounded-full blur-2xl scale-150 animate-pulse"></div>
+                  <div className="relative text-8xl md:text-9xl animate-bounce filter drop-shadow-2xl">
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🏆</span>
+                  </div>
+                  <div className="absolute -top-3 -right-3 text-3xl animate-spin">
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>⭐</span>
+                  </div>
+                  <div className="absolute -bottom-3 -left-3 text-2xl animate-bounce" style={{animationDelay: '0.3s'}}>
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>✨</span>
+                  </div>
+                  <div className="absolute top-1/2 -right-6 text-xl animate-pulse" style={{animationDelay: '0.6s'}}>�</div>
+                </div>
+                {/* Enhanced Congratulations Text */}
+                <div className="mb-8 space-y-4">
+                  <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent mb-4 animate-slideInUp font-thai leading-tight filter drop-shadow-sm">
+                    <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎉</span> เยี่ยมมาก! เสร็จแล้ว! <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎉</span>
+                  </h2>
+
+                  <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border-2 border-purple-200/60 shadow-inner animate-slideInUp" style={{animationDelay: '0.2s'}}>
+                    <p className="text-purple-700 text-xl md:text-2xl font-semibold font-thai mb-4 leading-relaxed">
+                      เก่งมากเลยนะคะ! <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🥳</span>
+                    </p>
+                    <p className="text-pink-600 text-lg md:text-xl font-medium font-thai mb-4">
+                      ประกอบจิ๊กซอว์ {gridSize}×{gridSize} ชิ้นสำเร็จแล้ว! <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🧩</span><span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>✨</span>
+                    </p>
+
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                      <span className="text-purple-600 text-base md:text-lg font-thai font-medium">ระดับความยาก:</span>
+                      <span className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 px-4 py-2 rounded-full text-sm md:text-base font-semibold shadow-sm border border-green-200">
+                        {selectedDifficulty === 'easy' ? <><span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>😊</span> ง่าย</> : selectedDifficulty === 'medium' ? <><span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🤔</span> ปานกลาง</> : <><span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>😤</span> ยาก</>}
+                      </span>
+                    </div>
+
+                    <p className="text-purple-600 text-sm md:text-base font-thai leading-relaxed">
+                      ความทรงจำสวยงามของเราเสร็จสมบูรณ์แล้ว <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>💕</span>
+                    </p>
+                  </div>
+                </div>
+                {/* Enhanced Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slideInUp" style={{animationDelay: '0.4s'}}>
                   <button
                     onClick={resetPuzzle}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm md:text-base font-thai"
+                    className="group bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 hover:from-purple-600 hover:via-pink-600 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl font-thai text-lg border-2 border-white/30 backdrop-blur-sm"
                   >
-                    🔄 เล่นภาพนี้อีกครั้ง
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="text-xl group-hover:animate-spin emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🔄</span>
+                      เล่นภาพนี้อีกครั้ง
+                    </span>
                   </button>
                   <button
                     onClick={changeImage}
-                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm md:text-base font-thai"
+                    className="group bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl font-thai text-lg border-2 border-white/30 backdrop-blur-sm"
                   >
-                    🎮 ความทรงจำใหม่
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="text-xl group-hover:animate-bounce emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎮</span>
+                      ความทรงจำใหม่
+                    </span>
                   </button>
+                </div>
+
+                {/* Enhanced Celebration Confetti Effect */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
+                  {/* Colorful confetti particles */}
+                  {[...Array(20)].map((_, i) => (
+                    <div
+                      key={`confetti-${i}`}
+                      className={`absolute w-2 h-2 rounded-full animate-ping ${
+                        i % 4 === 0 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' :
+                        i % 4 === 1 ? 'bg-gradient-to-r from-pink-400 to-rose-500' :
+                        i % 4 === 2 ? 'bg-gradient-to-r from-purple-400 to-indigo-500' :
+                        'bg-gradient-to-r from-green-400 to-emerald-500'
+                      }`}
+                      style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 4}s`,
+                        animationDuration: `${1 + Math.random() * 2}s`
+                      }}
+                    />
+                  ))}
+
+                  {/* Floating sparkle particles */}
+                  {[...Array(8)].map((_, i) => (
+                    <div
+                      key={`sparkle-${i}`}
+                      className="absolute text-lg animate-float filter drop-shadow-sm"
+                      style={{
+                        left: `${10 + Math.random() * 80}%`,
+                        top: `${10 + Math.random() * 80}%`,
+                        animationDelay: `${Math.random() * 3}s`,
+                        animationDuration: `${2 + Math.random() * 2}s`
+                      }}
+                    >
+                      <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>
+                        {i % 4 === 0 ? '✨' : i % 4 === 1 ? '⭐' : i % 4 === 2 ? '🌟' : '💫'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
                 </div>
               </div>
             </div>
