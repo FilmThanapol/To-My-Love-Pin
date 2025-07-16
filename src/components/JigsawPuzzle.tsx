@@ -1,5 +1,7 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import PopupLock from './PopupLock';
+import { usePopupLock } from '../hooks/usePopupLock';
 
 const JigsawPuzzle = () => {
   const [pieces, setPieces] = useState<Array<{id: number, x: number, y: number, correctX: number, correctY: number, placed: boolean}>>([]);
@@ -9,6 +11,12 @@ const JigsawPuzzle = () => {
   const [gridSize, setGridSize] = useState(3);
   const [isMobile, setIsMobile] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'difficult'>('easy');
+
+  // Throttling for mobile performance
+  const lastMoveTime = useRef(0);
+
+  // Popup lock functionality
+  const { isOpen: isHelpOpen, openPopup: openHelp, closePopup: closeHelp } = usePopupLock();
   
   const images = [
     '/img/film1.jpg',
@@ -30,6 +38,12 @@ const JigsawPuzzle = () => {
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
+
+    // Preload images for better performance
+    images.forEach(imageSrc => {
+      const img = new Image();
+      img.src = imageSrc;
+    });
 
     // Select random image
     const randomImage = images[Math.floor(Math.random() * images.length)];
@@ -72,12 +86,19 @@ const JigsawPuzzle = () => {
   };
 
 
-  const handleStart = (pieceId: number) => {
+  const handleStart = useCallback((pieceId: number) => {
     setDraggedPiece(pieceId);
-  };
+  }, []);
 
-  const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleMove = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     if (draggedPiece !== null) {
+      // Throttle updates for mobile performance
+      const now = Date.now();
+      if (isMobile && now - lastMoveTime.current < 16) { // ~60fps
+        return;
+      }
+      lastMoveTime.current = now;
+
       const rect = e.currentTarget.getBoundingClientRect();
       const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
       const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
@@ -92,12 +113,11 @@ const JigsawPuzzle = () => {
           : piece
       ));
     }
-  };
+  }, [draggedPiece, isMobile, gridSize]);
 
-  const handleEnd = () => {
+  const handleEnd = useCallback(() => {
     if (draggedPiece !== null) {
       const frameSize = isMobile ? 240 : 300;
-      const pieceSize = frameSize / gridSize;
       const frameOffset = isMobile ? frameSize/2 : 150;
 
       setPieces(prev => prev.map(piece => {
@@ -123,7 +143,7 @@ const JigsawPuzzle = () => {
 
       setDraggedPiece(null);
     }
-  };
+  }, [draggedPiece, isMobile]);
 
   useEffect(() => {
     const totalPieces = gridSize * gridSize;
@@ -132,6 +152,13 @@ const JigsawPuzzle = () => {
       setIsComplete(true);
     }
   }, [pieces, gridSize]);
+
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      // Cleanup on unmount
+    };
+  }, []);
 
   const changeDifficulty = (difficulty: 'easy' | 'medium' | 'difficult') => {
     const gridSizeMap = { easy: 3, medium: 4, difficult: 6 };
@@ -324,16 +351,16 @@ const JigsawPuzzle = () => {
               <div className="absolute -bottom-2 -right-2 text-purple-400 text-xl">🧩</div>
             </div>
 
-            {/* Puzzle pieces - positioned relative to the entire container */}
-            {pieces.map((piece) => {
+            {/* Puzzle pieces - Optimized for mobile performance */}
+            {useMemo(() => {
               const frameSize = isMobile ? 240 : 300;
               const pieceSize = frameSize / gridSize;
               const frameOffset = isMobile ? frameSize/2 : 150;
 
-              return (
+              return pieces.map((piece) => (
                 <div
                   key={piece.id}
-                  className={`absolute cursor-move transition-transform duration-200 ${
+                  className={`jigsaw-piece absolute cursor-move ${
                     piece.placed ? 'cursor-default' : 'hover:scale-105 active:scale-110'
                   }`}
                   style={{
@@ -344,15 +371,27 @@ const JigsawPuzzle = () => {
                     backgroundImage: `url(${selectedImage})`,
                     backgroundSize: `${frameSize}px ${frameSize}px`,
                     backgroundPosition: `-${(piece.id % gridSize) * pieceSize}px -${Math.floor(piece.id / gridSize) * pieceSize}px`,
-                    zIndex: draggedPiece === piece.id ? 10 : piece.placed ? 5 : 1
+                    zIndex: draggedPiece === piece.id ? 10 : piece.placed ? 5 : 1,
+                    transform: draggedPiece === piece.id ? 'scale(1.05)' : 'scale(1)',
+                    willChange: draggedPiece === piece.id ? 'transform' : 'auto',
+                    transition: draggedPiece === piece.id ? 'none' : 'transform 0.2s ease'
                   }}
-                  onMouseDown={() => !piece.placed && handleStart(piece.id)}
-                  onTouchStart={() => !piece.placed && handleStart(piece.id)}
+                  onMouseDown={() => {
+                    if (!piece.placed) {
+                      handleStart(piece.id);
+                    }
+                  }}
+                  onTouchStart={(e) => {
+                    if (!piece.placed) {
+                      e.preventDefault(); // Only prevent on touch to stop scroll-to-top
+                      handleStart(piece.id);
+                    }
+                  }}
                 >
                   <div className="w-full h-full border-2 border-white rounded-lg shadow-lg"></div>
                 </div>
-              );
-            })}
+              ));
+            }, [pieces, isMobile, gridSize, selectedImage, draggedPiece, handleStart])}
           </div>
         </div>
 
@@ -383,6 +422,13 @@ const JigsawPuzzle = () => {
               เปลี่ยนภาพใหม่ 🔄
             </button>
 
+            <button
+              onClick={openHelp}
+              className="bg-gradient-to-r from-blue-400 to-cyan-400 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base"
+            >
+              ช่วยเหลือ ❓
+            </button>
+
             <div className="flex space-x-2">
               {['🧩', '💕', '🌸'].map((emoji, i) => (
                 <span
@@ -397,6 +443,57 @@ const JigsawPuzzle = () => {
           </div>
         </div>
       </div>
+
+      {/* Help Popup Lock */}
+      <PopupLock
+        isOpen={isHelpOpen}
+        onClose={closeHelp}
+        title="🧩 วิธีเล่นจิ๊กซอว์"
+        allowBackgroundClick={true}
+      >
+        <div className="space-y-4 text-center">
+          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-3 font-thai">📱 วิธีเล่นบนมือถือ</h3>
+            <ul className="text-sm text-gray-600 space-y-2 font-thai text-left">
+              <li>• <strong>แตะและลาก</strong> ชิ้นส่วนจิ๊กซอว์เข้าที่</li>
+              <li>• <strong>ลากชิ้นส่วน</strong> ไปใกล้ตำแหน่งที่ถูกต้อง</li>
+              <li>• <strong>ชิ้นส่วนจะติด</strong> เมื่ออยู่ใกล้ตำแหน่งที่ถูกต้อง</li>
+            </ul>
+          </div>
+
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-3 font-thai">🎯 ระดับความยาก</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+              <div className="bg-green-100 rounded-lg p-3 border border-green-200">
+                <div className="text-2xl mb-1">😊</div>
+                <div className="font-bold text-green-700 font-thai">ง่าย</div>
+                <div className="text-green-600 font-thai">3×3 = 9 ชิ้น</div>
+              </div>
+              <div className="bg-orange-100 rounded-lg p-3 border border-orange-200">
+                <div className="text-2xl mb-1">🤔</div>
+                <div className="font-bold text-orange-700 font-thai">ปานกลาง</div>
+                <div className="text-orange-600 font-thai">4×4 = 16 ชิ้น</div>
+              </div>
+              <div className="bg-red-100 rounded-lg p-3 border border-red-200">
+                <div className="text-2xl mb-1">😤</div>
+                <div className="font-bold text-red-700 font-thai">ยาก</div>
+                <div className="text-red-600 font-thai">6×6 = 36 ชิ้น</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl p-4 border border-pink-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-3 font-thai">💡 เคล็ดลับ</h3>
+            <ul className="text-sm text-gray-600 space-y-2 font-thai text-left">
+              <li>• เริ่มจากชิ้นส่วนมุมและขอบก่อน</li>
+              <li>• ดูสีและลวดลายให้ดี</li>
+              <li>• อดทนและสนุกกับการเล่น! 🎉</li>
+            </ul>
+          </div>
+        </div>
+      </PopupLock>
+
+
     </section>
   );
 };

@@ -41,6 +41,128 @@ body {
   background: linear-gradient(to bottom, #db2777, #9333ea);
 }
 
+/* Prevent scroll-to-top in jigsaw puzzle - Only for pieces */
+.jigsaw-piece {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: grab;
+  text-decoration: none;
+}
+
+.jigsaw-piece:active {
+  cursor: grabbing;
+}
+
+/* Prevent focus scrolling only on pieces */
+.jigsaw-piece:focus {
+  outline: none;
+}
+
+/* Mobile performance optimizations */
+.jigsaw-piece {
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+/* Optimize transitions for mobile */
+@media (max-width: 768px) {
+  .jigsaw-piece {
+    transition: transform 0.1s ease !important;
+  }
+
+  .jigsaw-piece:hover {
+    transform: none !important; /* Disable hover effects on mobile */
+  }
+}
+
+/* Global scroll lock during jigsaw play */
+body.jigsaw-playing {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none !important;
+}
+
+/* Prevent any possible scroll triggers */
+body.jigsaw-playing * {
+  scroll-behavior: auto !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+
+/* Fixed popup lock screen overlay - Prevents all scrolling */
+.popup-lock-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto; /* Changed to auto to block all interactions */
+  overflow: hidden; /* Prevent any scrolling */
+  touch-action: none; /* Prevent touch scrolling */
+  -webkit-overflow-scrolling: touch; /* iOS scroll fix */
+}
+
+.popup-lock-content {
+  pointer-events: auto; /* Re-enables clicking on the popup content */
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 2px solid #f3e8ff;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto; /* Allow scrolling within popup only */
+  touch-action: auto; /* Allow touch scrolling within popup */
+  -webkit-overflow-scrolling: touch; /* Smooth iOS scrolling */
+}
+
+/* Smooth popup animations */
+.popup-lock-overlay.entering {
+  animation: popupFadeIn 0.3s ease-out;
+}
+
+.popup-lock-overlay.exiting {
+  animation: popupFadeOut 0.3s ease-in;
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes popupFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
 @layer base {
