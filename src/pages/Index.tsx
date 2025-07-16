@@ -9,6 +9,27 @@ import VideoMemory from '../components/VideoMemory';
 const Index = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
 
+  // Function to render text with proper emoji handling
+  const renderTextWithEmojis = (text: string) => {
+    const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+    const parts = text.split(emojiRegex);
+
+    return parts.map((part, index) => {
+      if (emojiRegex.test(part)) {
+        return (
+          <span
+            key={index}
+            className="emoji"
+            style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   const handleUnlock = () => {
     setIsUnlocked(true);
   };
@@ -47,13 +68,14 @@ const Index = () => {
 
         <div className="text-center space-y-6 md:space-y-8 relative z-10 max-w-4xl mx-auto px-4">
           <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-pink-200">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent font-thai mb-6">
-              รักแมวจ๋องมากๆ นะ 💕
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 flex items-center justify-center gap-3 flex-wrap">
+              <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent font-thai">รักแมวจ๋องมากๆ นะ</span>
+              <span className="emoji text-pink-500" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>💕</span>
             </h2>
 
             <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-4 md:p-6 border border-pink-100 mb-6">
               <p className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed font-thai">
-                ขอบคุณสำหรับทุกอย่างที่ผ่านมาเลยนะคับ ขอให้เรามีความสุขไปด้วยกันนานๆเลยน้าาา เค้ารักปิ่นนะคับ 😺💖
+                {renderTextWithEmojis("ขอบคุณสำหรับทุกอย่างที่ผ่านมาเลยนะคับ ขอให้เรามีความสุขไปด้วยกันนานๆเลยน้าาา เค้ารักปิ่นนะคับ 😺💖")}
               </p>
             </div>
 
@@ -61,8 +83,11 @@ const Index = () => {
               {['💕', '💖', '💗', '💓', '💕', '🌸', '💖', '💗', '💓'].map((emoji, i) => (
                 <div
                   key={i}
-                  className="text-2xl md:text-3xl animate-bounce"
-                  style={{ animationDelay: `${i * 0.1}s` }}
+                  className="text-2xl md:text-3xl animate-bounce emoji"
+                  style={{
+                    animationDelay: `${i * 0.1}s`,
+                    fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'
+                  }}
                 >
                   {emoji}
                 </div>

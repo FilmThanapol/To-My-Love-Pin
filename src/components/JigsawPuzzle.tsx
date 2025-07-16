@@ -294,7 +294,7 @@ const JigsawPuzzle = () => {
       <div className="max-w-7xl mx-auto text-center relative z-10">
         <div className="mb-8 md:mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 font-thai">
-            เกมจิ๊กซอว์ความทรงจำ <span className="emoji">🧩</span>
+            เกมจิ๊กซอว์ความทรงจำ <span className="text-20xl emoji text-pink-500" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🧩</span>
           </h2>
           <div className="flex justify-center space-x-2 mb-4">
             {['🧩', '💕', '🌸', '💖', '🧩'].map((emoji, i) => (

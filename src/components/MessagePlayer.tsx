@@ -15,6 +15,27 @@ const MessagePlayer = () => {
   const [imageDimensions, setImageDimensions] = useState<{width: number, height: number, aspectRatio: number} | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  // Function to render text with proper emoji handling
+  const renderTextWithEmojis = (text: string) => {
+    const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+    const parts = text.split(emojiRegex);
+
+    return parts.map((part, index) => {
+      if (emojiRegex.test(part)) {
+        return (
+          <span
+            key={index}
+            className="emoji"
+            style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   const messages = [
     {
       title: "มะหมามีไรจะบอกด้วย 🐶 !!",
@@ -230,15 +251,19 @@ const MessagePlayer = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-rose-600 to-purple-600 bg-clip-text text-transparent mb-4 font-thai">
-            ข้อความจากใจ 💕
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 flex items-center justify-center gap-3 flex-wrap">
+            <span className="bg-gradient-to-r from-rose-600 to-purple-600 bg-clip-text text-transparent font-thai">ข้อความจากใจ</span>
+            <span className="emoji text-pink-500" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>💕</span>
           </h2>
           <div className="flex justify-center space-x-2 mb-4">
             {['🎵', '💖', '🎶', '💕', '🎵'].map((emoji, i) => (
               <span
                 key={i}
-                className="text-lg md:text-xl animate-bounce"
-                style={{animationDelay: `${i * 0.1}s`}}
+                className="text-lg md:text-xl animate-bounce emoji"
+                style={{
+                  animationDelay: `${i * 0.1}s`,
+                  fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'
+                }}
               >
                 {emoji}
               </span>
@@ -280,11 +305,11 @@ const MessagePlayer = () => {
 
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-gray-800 mb-4 font-thai">
-                  {messages[currentTrack].title}
+                  {renderTextWithEmojis(messages[currentTrack].title)}
                 </h3>
 
                 <p className="text-gray-600 leading-relaxed text-lg font-thai">
-                  {messages[currentTrack].text}
+                  {renderTextWithEmojis(messages[currentTrack].text)}
                 </p>
               </div>
 
@@ -321,8 +346,9 @@ const MessagePlayer = () => {
           <div className="space-y-6 order-1 lg:order-2">
             <div className="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl border border-purple-100 relative">
               <div className="text-center mb-4 md:mb-6">
-                <h4 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-rose-600 to-purple-600 bg-clip-text text-transparent mb-2 font-thai">
-                  เสียงจากใจ 🎵
+                <h4 className="text-xl sm:text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+                  <span className="bg-gradient-to-r from-rose-600 to-purple-600 bg-clip-text text-transparent font-thai">เสียงจากใจ</span>
+                  <span className="emoji text-purple-500" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎵</span>
                 </h4>
                 <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-rose-400 to-purple-400 rounded-full mx-auto"></div>
               </div>
@@ -338,12 +364,12 @@ const MessagePlayer = () => {
 
                 <div className="text-center mb-4">
                   <p className="text-xl font-bold text-gray-800 font-thai">
-                    {messages[currentTrack].title}
+                    {renderTextWithEmojis(messages[currentTrack].title)}
                   </p>
                   {isPlaying && (
                     <div className="flex justify-center space-x-1 mt-2">
-                      <span className="text-rose-500 animate-pulse">🎵</span>
-                      <span className="text-purple-500 animate-pulse" style={{animationDelay: '0.5s'}}>�</span>
+                      <span className="text-rose-500 animate-pulse emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎵</span>
+                      <span className="text-purple-500 animate-pulse emoji" style={{animationDelay: '0.5s', fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🎶</span>
                     </div>
                   )}
                 </div>

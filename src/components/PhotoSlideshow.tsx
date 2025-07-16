@@ -7,7 +7,28 @@ const PhotoSlideshow = memo(() => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  
+
+  // Function to render text with proper emoji handling
+  const renderTextWithEmojis = (text: string) => {
+    const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)/gu;
+    const parts = text.split(emojiRegex);
+
+    return parts.map((part, index) => {
+      if (emojiRegex.test(part)) {
+        return (
+          <span
+            key={index}
+            className="emoji"
+            style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   const photos = [
     {
       img: "/img/pin1.jpg",
@@ -110,13 +131,14 @@ const PhotoSlideshow = memo(() => {
         [...Array(4)].map((_, i) => (
           <div
             key={`sparkle-${i}`}
-            className="absolute text-yellow-300 opacity-40 animate-ping"
+            className="absolute text-yellow-300 opacity-40 animate-ping emoji"
             style={{
               left: `${25 + (i * 25)}%`,
               top: `${20 + (i * 20)}%`,
               animationDelay: `${i * 0.8}s`,
               animationDuration: `2s`,
-              fontSize: '12px'
+              fontSize: '12px',
+              fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'
             }}
           >
             ✨
@@ -126,22 +148,27 @@ const PhotoSlideshow = memo(() => {
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <div className="mb-8 md:mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4 font-thai">
-            ครบรอบ 1 ปี 💕
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 flex items-center justify-center gap-3 flex-wrap">
+            <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent font-thai">ครบรอบ 1 ปี</span>
+            <span className="text-10xl emoji text-pink-500" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>💕</span>
           </h2>
           <div className="flex justify-center space-x-2 mb-4">
             {['🌸', '💖', '🌺', '💕', '🌸'].map((emoji, i) => (
               <span
                 key={i}
-                className="text-lg md:text-xl animate-bounce"
-                style={{animationDelay: `${i * 0.1}s`}}
+                className="text-lg md:text-xl animate-bounce emoji"
+                style={{
+                  animationDelay: `${i * 0.1}s`,
+                  fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'
+                }}
               >
                 {emoji}
               </span>
             ))}
           </div>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 font-thai px-4">
-            365 วันแห่งความรักและความทรงจำดีๆ กับแมวจ๋อง 🐱
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 font-thai px-4 flex items-center justify-center gap-1 flex-wrap">
+            <span>365 วันแห่งความรักและความทรงจำดีๆ กับแมวจ๋อง</span>
+            <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>🐱</span>
           </p>
         </div>
 
@@ -182,8 +209,10 @@ const PhotoSlideshow = memo(() => {
             </button>
 
             {/* Mobile swipe indicator */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/20 backdrop-blur-sm rounded-full px-3 py-1 text-white text-xs opacity-60 sm:hidden">
-              👈 เลื่อนดูภาพ 👉
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/20 backdrop-blur-sm rounded-full px-3 py-1 text-white text-xs opacity-60 sm:hidden flex items-center gap-1">
+              <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>👈</span>
+              <span>เลื่อนดูภาพ</span>
+              <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>👉</span>
             </div>
           </div>
 
@@ -191,7 +220,7 @@ const PhotoSlideshow = memo(() => {
           <div className="mt-4 sm:mt-6 space-y-2 px-2">
             <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-3 sm:p-4 border border-pink-100">
               <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 font-thai leading-relaxed">
-                {photos[currentPhoto].caption}
+                {renderTextWithEmojis(photos[currentPhoto].caption)}
               </h3>
             </div>
           </div>
@@ -229,8 +258,9 @@ const PhotoSlideshow = memo(() => {
 
           {/* Progress indicator */}
           <div className="mt-4 text-center">
-            <span className="text-xs sm:text-sm text-gray-500 font-thai">
-              {currentPhoto + 1} / {photos.length} 📸
+            <span className="text-xs sm:text-sm text-gray-500 font-thai flex items-center justify-center gap-1">
+              <span>{currentPhoto + 1} / {photos.length}</span>
+              <span className="emoji" style={{fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif'}}>📸</span>
             </span>
           </div>
         </div>
