@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Emoji Font Support - Ensure proper emoji rendering across all platforms */
+@layer base {
+  * {
+    font-family:
+      /* System fonts first */
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+      /* Emoji fonts for cross-platform support */
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji', 'EmojiSymbols',
+      /* Fallback fonts */
+      sans-serif, 'Helvetica Neue', Arial;
+  }
+
+  /* Specific emoji class for better control */
+  .emoji {
+    font-family:
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji', 'EmojiSymbols',
+      'Symbola', 'DejaVu Sans', sans-serif;
+    font-variant-emoji: emoji;
+    font-feature-settings: "liga" off;
+  }
+
+  /* Thai font support with emoji fallback */
+  .font-thai {
+    font-family:
+      'Sarabun', 'Prompt', 'Kanit', 'Noto Sans Thai', 'Leelawadee UI',
+      /* Emoji support */
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji',
+      /* System fallbacks */
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+}
+
 /* Enhanced smooth scrolling and mobile optimizations */
 html {
   scroll-behavior: smooth;
@@ -428,5 +460,73 @@ body.jigsaw-playing * {
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Additional Emoji Support and Fixes */
+/* Force emoji rendering for specific elements */
+button, .emoji, [class*="emoji"], h1, h2, h3, h4, h5, h6, p, span, div {
+  font-variant-emoji: emoji;
+  text-rendering: optimizeLegibility;
+}
+
+/* Ensure emojis don't break layout */
+.emoji, [class*="emoji"] {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Fix for emoji sizing in different contexts */
+.text-xs .emoji, .text-xs [class*="emoji"] { font-size: 0.75rem; }
+.text-sm .emoji, .text-sm [class*="emoji"] { font-size: 0.875rem; }
+.text-base .emoji, .text-base [class*="emoji"] { font-size: 1rem; }
+.text-lg .emoji, .text-lg [class*="emoji"] { font-size: 1.125rem; }
+.text-xl .emoji, .text-xl [class*="emoji"] { font-size: 1.25rem; }
+.text-2xl .emoji, .text-2xl [class*="emoji"] { font-size: 1.5rem; }
+.text-3xl .emoji, .text-3xl [class*="emoji"] { font-size: 1.875rem; }
+.text-4xl .emoji, .text-4xl [class*="emoji"] { font-size: 2.25rem; }
+
+/* Fallback for browsers that don't support color emojis */
+@supports not (font-variant-emoji: emoji) {
+  .emoji::before {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    vertical-align: middle;
+  }
+}
+
+/* Additional emoji rendering fixes */
+.emoji {
+  /* Prevent emoji from being affected by text transforms */
+  text-transform: none !important;
+  /* Ensure proper spacing */
+  letter-spacing: normal;
+  /* Prevent font-weight from affecting emojis */
+  font-weight: normal !important;
+  /* Better emoji alignment */
+  vertical-align: baseline;
+}
+
+/* Fix for specific emoji rendering issues on Windows */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .emoji {
+    font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif !important;
+  }
+}
+
+/* Fix for Firefox emoji rendering */
+@-moz-document url-prefix() {
+  .emoji {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'EmojiOne Color', sans-serif !important;
   }
 }

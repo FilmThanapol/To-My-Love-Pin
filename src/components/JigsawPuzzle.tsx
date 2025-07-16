@@ -3,6 +3,13 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import PopupLock from './PopupLock';
 import { usePopupLock } from '../hooks/usePopupLock';
 
+// Utility function to ensure proper emoji rendering across all platforms
+const EmojiSpan = ({ children, className = "" }: { children: string; className?: string }) => (
+  <span className={`emoji ${className}`} role="img" aria-label={children}>
+    {children}
+  </span>
+);
+
 const JigsawPuzzle = () => {
   const [pieces, setPieces] = useState<Array<{id: number, x: number, y: number, correctX: number, correctY: number, placed: boolean}>>([]);
   const [selectedImage, setSelectedImage] = useState('');
@@ -287,13 +294,13 @@ const JigsawPuzzle = () => {
       <div className="max-w-7xl mx-auto text-center relative z-10">
         <div className="mb-8 md:mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 font-thai">
-            เกมจิ๊กซอว์ความทรงจำ 🧩
+            เกมจิ๊กซอว์ความทรงจำ <span className="emoji">🧩</span>
           </h2>
           <div className="flex justify-center space-x-2 mb-4">
             {['🧩', '💕', '🌸', '💖', '🧩'].map((emoji, i) => (
               <span
                 key={i}
-                className="text-lg md:text-xl animate-bounce"
+                className="text-lg md:text-xl animate-bounce emoji"
                 style={{animationDelay: `${i * 0.1}s`}}
               >
                 {emoji}
@@ -308,7 +315,7 @@ const JigsawPuzzle = () => {
         {/* Difficulty Selection - Enhanced */}
         <div className="mb-8 md:mb-12">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-purple-100 mx-2 sm:mx-4">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 font-thai">🎯 เลือกระดับความยาก:</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 font-thai"><span className="emoji">🎯</span> เลือกระดับความยาก:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
               <button
                 onClick={() => changeDifficulty('easy')}
@@ -438,6 +445,19 @@ const JigsawPuzzle = () => {
           {showCelebration && (
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
               <div className="bg-gradient-to-br from-purple-50 via-white to-pink-50 rounded-3xl p-6 md:p-8 max-w-lg w-full mx-4 text-center shadow-2xl border-4 border-purple-200 animate-scaleIn relative overflow-hidden">
+
+                {/* Close Button */}
+                <button
+                  onClick={() => {
+                    setShowCelebration(false);
+                    setShowSeamlessImage(false);
+                    setShowMagicalReveal(false);
+                  }}
+                  className="absolute top-4 right-4 w-8 h-8 bg-gray-600 hover:bg-gray-700 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg z-10"
+                  aria-label="Close popup"
+                >
+                  <span className="text-sm font-bold">✕</span>
+                </button>
                 {/* Completed Image Display */}
                 <div className="mb-6 relative">
                   <div className="w-full max-w-sm mx-auto aspect-square rounded-2xl overflow-hidden shadow-xl border-4 border-purple-100 animate-fadeInScale">
@@ -447,7 +467,7 @@ const JigsawPuzzle = () => {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="absolute -top-2 -right-2 text-4xl animate-bounce">🎉</div>
+                  <div className="absolute -top-5 -right-2 text-4xl animate-bounce">🎉</div>
                   <div className="absolute -top-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.2s'}}>✨</div>
                   <div className="absolute -bottom-2 -right-2 text-4xl animate-bounce" style={{animationDelay: '0.4s'}}>🎊</div>
                   <div className="absolute -bottom-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.6s'}}>🧩</div>
@@ -455,7 +475,6 @@ const JigsawPuzzle = () => {
                   {/* Extra floating decorations */}
                   <div className="absolute top-1/2 -left-8 text-2xl animate-float">💖</div>
                   <div className="absolute top-1/2 -right-8 text-2xl animate-float" style={{animationDelay: '0.8s'}}>💝</div>
-                  <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl animate-spin-slow">🌟</div>
                 </div>
 
                 {/* Floating sparkles */}
@@ -646,12 +665,12 @@ const JigsawPuzzle = () => {
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 md:p-6 shadow-xl border border-purple-200 max-w-2xl w-full">
             <div className="text-center mb-4">
               <h3 className="text-base md:text-lg font-semibold text-gray-700 font-thai flex items-center justify-center gap-2">
-                <span className="text-xl">🎮</span>
+                <span className="text-xl emoji">🎮</span>
                 ตัวช่วยเล่นเกม
-                <span className="text-xl">✨</span>
+                <span className="text-xl emoji">✨</span>
               </h3>
               <p className="text-xs md:text-sm text-gray-500 mt-1 font-thai">
-                💡 ใช้เมื่อต้องการความช่วยเหลือหรือดูตัวอย่าง
+                <span className="emoji">💡</span> ใช้เมื่อต้องการความช่วยเหลือหรือดูตัวอย่าง
               </p>
             </div>
 
@@ -671,9 +690,9 @@ const JigsawPuzzle = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative flex items-center justify-center gap-2">
-                  <span className="text-lg">✨</span>
+                  <span className="text-lg emoji">✨</span>
                   <span>ดูตัวอย่างเมื่อเสร็จ</span>
-                  <span className="text-lg">🎉</span>
+                  <span className="text-lg emoji">🎉</span>
                 </div>
               </button>
 
@@ -693,18 +712,18 @@ const JigsawPuzzle = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative flex items-center justify-center gap-2">
-                  <span className="text-lg">🧩</span>
+                  <span className="text-lg emoji">🧩</span>
                   <span>เฉลยให้หน่อย</span>
-                  <span className="text-lg">💡</span>
+                  <span className="text-lg emoji">💡</span>
                 </div>
               </button>
             </div>
 
             <div className="mt-4 text-center">
               <div className="flex justify-center items-center gap-2 text-xs md:text-sm text-gray-400 font-thai">
-                <span>🌟</span>
+                <span className="emoji">🌟</span>
                 <span>สนุกกับการเล่นจิ๊กซอว์ความทรงจำ</span>
-                <span>💖</span>
+                <span className="emoji">💖</span>
               </div>
             </div>
           </div>
