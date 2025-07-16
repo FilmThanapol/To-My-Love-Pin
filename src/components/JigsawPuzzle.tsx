@@ -12,6 +12,8 @@ const JigsawPuzzle = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'difficult'>('easy');
   const [showMagicalReveal, setShowMagicalReveal] = useState(false);
+  const [showSeamlessImage, setShowSeamlessImage] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   // Throttling for mobile performance
   const lastMoveTime = useRef(0);
@@ -127,6 +129,12 @@ const JigsawPuzzle = () => {
       e.preventDefault();
       e.stopPropagation();
 
+      // Prevent body scrolling on mobile
+      if ('touches' in e) {
+        document.body.style.overflow = 'hidden';
+        document.body.style.touchAction = 'none';
+      }
+
       // Throttle updates for mobile performance
       const now = Date.now();
       if (isMobile && now - lastMoveTime.current < 16) { // ~60fps
@@ -151,6 +159,10 @@ const JigsawPuzzle = () => {
   }, [draggedPiece, isMobile, gridSize]);
 
   const handleEnd = useCallback(() => {
+    // Restore scrolling on mobile
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
+
     if (draggedPiece !== null) {
       const frameSize = isMobile ? 240 : 300;
       const frameOffset = isMobile ? frameSize/2 : 150;
@@ -164,7 +176,6 @@ const JigsawPuzzle = () => {
           );
 
           if (distance < (isMobile ? 30 : 50)) {
-            console.log(`✅ Piece ${piece.id} placed! Distance: ${distance}`);
             // Snap to exact position
             return {
               ...piece,
@@ -172,8 +183,6 @@ const JigsawPuzzle = () => {
               y: piece.correctY + (isMobile ? 120 : 100) - frameOffset,
               placed: true
             };
-          } else {
-            console.log(`❌ Piece ${piece.id} not close enough. Distance: ${distance}, threshold: ${isMobile ? 30 : 50}`);
           }
         }
         return piece;
@@ -187,31 +196,48 @@ const JigsawPuzzle = () => {
     const totalPieces = gridSize * gridSize;
     const placedPieces = pieces.filter(piece => piece.placed).length;
 
-    // Debug logging
-    console.log('Completion check:', {
+
+
+    // Check completion with more detailed logging
+    const allPiecesPlaced = pieces.every(piece => piece.placed);
+    console.log('🔍 Completion check:', {
       totalPieces,
       placedPieces,
       piecesLength: pieces.length,
+      allPiecesPlaced,
       isComplete,
-      showMagicalReveal,
-      pieces: pieces.map(p => ({ id: p.id, placed: p.placed }))
+      showMagicalReveal
     });
 
-    if (placedPieces === totalPieces && pieces.length === totalPieces && !isComplete && !showMagicalReveal) {
-      console.log('🎉 PUZZLE COMPLETED! Triggering magical reveal...');
-      // Trigger magical reveal sequence
-      setShowMagicalReveal(true);
+    if (allPiecesPlaced && pieces.length === totalPieces && !isComplete && !showMagicalReveal) {
+      console.log('🎉 PUZZLE COMPLETED! Starting magical sequence...');
 
-      // Play cheerful completion sound
+      // Step 1: Start magical reveal with sparkles
+      setShowMagicalReveal(true);
       playCompletionSound();
 
-      // After magical reveal, show completion popup
+      // Step 2: After 1 second, show seamless image
       setTimeout(() => {
+        setShowSeamlessImage(true);
+      }, 1000);
+
+      // Step 3: After 2.5 seconds, show celebration popup
+      setTimeout(() => {
+        setShowCelebration(true);
         setIsComplete(true);
         setShowMagicalReveal(false);
-      }, 3000); // 3 seconds for the magical reveal
+      }, 2500);
     }
   }, [pieces, gridSize, isComplete, showMagicalReveal]);
+
+  const resetPuzzle = useCallback(() => {
+    setIsComplete(false);
+    setShowMagicalReveal(false);
+    setShowSeamlessImage(false);
+    setShowCelebration(false);
+    setDraggedPiece(null);
+    initializePuzzle(gridSize);
+  }, [gridSize, initializePuzzle]);
 
   // Cleanup effect
   useEffect(() => {
@@ -344,6 +370,43 @@ const JigsawPuzzle = () => {
           </div>
         </div>
 
+        {/* Test Buttons (for debugging) */}
+        <div className="mb-4 text-center space-x-2">
+          <button
+            onClick={() => {
+              console.log('🧪 Manual completion test triggered');
+              setShowMagicalReveal(true);
+              playCompletionSound();
+              setTimeout(() => setShowSeamlessImage(true), 1000);
+              setTimeout(() => {
+                setShowCelebration(true);
+                setIsComplete(true);
+                setShowMagicalReveal(false);
+              }, 2500);
+            }}
+            className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600 transition-colors"
+          >
+            🧪 ตัวอย่างถ้าเสร็จแล้วเป็นงี้นะ
+          </button>
+          <button
+            onClick={() => {
+              console.log('🧪 Auto-placing all pieces');
+              const frameSize = isMobile ? 240 : 300;
+              const frameOffset = isMobile ? frameSize/2 : 150;
+
+              setPieces(prev => prev.map(piece => ({
+                ...piece,
+                x: piece.correctX + (isMobile ? 120 : 250) - frameOffset,
+                y: piece.correctY + (isMobile ? 120 : 100) - frameOffset,
+                placed: true
+              })));
+            }}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 transition-colors"
+          >
+            🧩 เฉลยค้าบบบ
+          </button>
+        </div>
+
         <div className={`relative w-full mx-auto ${isMobile ? 'max-w-sm' : 'max-w-6xl'}`}>
           {/* Magical Reveal Overlay */}
           {showMagicalReveal && (
@@ -419,9 +482,9 @@ const JigsawPuzzle = () => {
             </div>
           )}
 
-          {isComplete && (
+          {showCelebration && (
             <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-              <div className="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full mx-4 text-center shadow-2xl border-4 border-purple-200 animate-scaleIn">
+              <div className="bg-gradient-to-br from-purple-50 via-white to-pink-50 rounded-3xl p-6 md:p-8 max-w-lg w-full mx-4 text-center shadow-2xl border-4 border-purple-200 animate-scaleIn relative overflow-hidden">
                 {/* Completed Image Display */}
                 <div className="mb-6 relative">
                   <div className="w-full max-w-sm mx-auto aspect-square rounded-2xl overflow-hidden shadow-xl border-4 border-purple-100 animate-fadeInScale">
@@ -437,29 +500,34 @@ const JigsawPuzzle = () => {
                   <div className="absolute -bottom-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.6s'}}>🧩</div>
                 </div>
 
+                {/* Floating sparkles */}
+                <div className="absolute top-4 left-4 text-2xl animate-bounce">✨</div>
+                <div className="absolute top-4 right-4 text-2xl animate-bounce" style={{animationDelay: '0.3s'}}>🎊</div>
+                <div className="absolute bottom-4 left-4 text-2xl animate-bounce" style={{animationDelay: '0.6s'}}>💫</div>
+                <div className="absolute bottom-4 right-4 text-2xl animate-bounce" style={{animationDelay: '0.9s'}}>🎉</div>
+
                 <div className="text-6xl md:text-8xl mb-4 animate-pulse">🏆</div>
-                <h2 className="text-2xl md:text-3xl font-bold text-purple-600 mb-4 font-thai animate-slideInUp">
-                  ยินดีด้วย! 🎊
+                <h2 className="text-2xl md:text-3xl font-bold text-purple-600 mb-4 animate-slideInUp">
+                  ตัวอย่าง 🎉
                 </h2>
-                <p className="text-gray-600 mb-6 font-thai text-sm md:text-base animate-slideInUp" style={{animationDelay: '0.2s'}}>
-                  คุณทำจิ๊กซอว์สำเร็จแล้ว! 🧩✨<br/>
+                <p className="text-gray-600 mb-6 text-sm md:text-base animate-slideInUp" style={{animationDelay: '0.2s'}}>
+                  เก่งมากเลยแมวจ๋อง 😸 {gridSize}×{gridSize} puzzle! 🧩✨<br/>
                   <span className="text-purple-500 font-semibold">
-                    ระดับ: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'}
-                    ({gridSize}×{gridSize})
+                    ระดับความยาก: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 กลาง' : '😤 ยาก'}
                   </span>
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slideInUp" style={{animationDelay: '0.4s'}}>
                   <button
-                    onClick={changeImage}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base"
+                    onClick={resetPuzzle}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm md:text-base"
                   >
-                    เล่นใหม่ 🔄
+                    ลองเล่นภาพนี้ 🔄
                   </button>
                   <button
-                    onClick={() => changeDifficulty(selectedDifficulty)}
-                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base"
+                    onClick={changeImage}
+                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm md:text-base"
                   >
-                    เล่นอีกครั้ง 🎮
+                    สุ่มรูปต่อไป 🎮
                   </button>
                 </div>
               </div>
@@ -470,6 +538,7 @@ const JigsawPuzzle = () => {
             className={`puzzle-container relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-100 rounded-3xl shadow-inner overflow-visible border border-gray-200 ${
               isMobile ? 'h-[500px] sm:h-[600px]' : 'h-96 md:h-[500px]'
             }`}
+            style={{ touchAction: 'none' }}
             onMouseMove={handleMove}
             onMouseUp={handleEnd}
             onMouseLeave={handleEnd}
@@ -500,6 +569,24 @@ const JigsawPuzzle = () => {
               <div className="absolute -bottom-2 -left-2 text-pink-400 text-xl">💖</div>
               <div className="absolute -bottom-2 -right-2 text-purple-400 text-xl">🧩</div>
             </div>
+
+            {/* Seamless Image Reveal - appears when puzzle is completed */}
+            {showSeamlessImage && (
+              <div className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-3xl overflow-hidden shadow-2xl transition-all duration-1000 ease-out ${
+                showSeamlessImage ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
+              } ${isMobile ? 'w-60 h-60 sm:w-72 sm:h-72' : 'w-80 h-80 md:w-96 md:h-96'}`}>
+                <img
+                  src={selectedImage}
+                  alt="Completed puzzle"
+                  className="w-full h-full object-cover animate-pulse"
+                  style={{
+                    animation: 'fadeInScale 1s ease-out forwards'
+                  }}
+                />
+                {/* Magical glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-purple-400/20 animate-pulse"></div>
+              </div>
+            )}
 
             {/* Puzzle pieces - Optimized for mobile performance */}
             {useMemo(() => {
@@ -643,6 +730,42 @@ const JigsawPuzzle = () => {
         </div>
       </PopupLock>
 
+      {/* CSS Animations for magical reveal */}
+      <style>{`
+        @keyframes fadeInScale {
+          0% {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          50% {
+            opacity: 0.7;
+            transform: scale(1.05);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes sparkleFloat {
+          0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+            opacity: 1;
+          }
+          50% {
+            transform: translateY(-20px) rotate(180deg);
+            opacity: 0.7;
+          }
+        }
+
+        .animate-fadeInScale {
+          animation: fadeInScale 1s ease-out forwards;
+        }
+
+        .animate-sparkleFloat {
+          animation: sparkleFloat 2s ease-in-out infinite;
+        }
+      `}</style>
 
     </section>
   );
