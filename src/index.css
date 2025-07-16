@@ -230,6 +230,10 @@ body {
   animation: sparkle 2s ease-in-out infinite;
 }
 
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
 .animate-magicalGrow {
   animation: magicalGrow 2s ease-out;
 }

@@ -194,23 +194,11 @@ const JigsawPuzzle = () => {
 
   useEffect(() => {
     const totalPieces = gridSize * gridSize;
-    const placedPieces = pieces.filter(piece => piece.placed).length;
 
-
-
-    // Check completion with more detailed logging
+    // Check completion
     const allPiecesPlaced = pieces.every(piece => piece.placed);
-    console.log('🔍 Completion check:', {
-      totalPieces,
-      placedPieces,
-      piecesLength: pieces.length,
-      allPiecesPlaced,
-      isComplete,
-      showMagicalReveal
-    });
 
     if (allPiecesPlaced && pieces.length === totalPieces && !isComplete && !showMagicalReveal) {
-      console.log('🎉 PUZZLE COMPLETED! Starting magical sequence...');
 
       // Step 1: Start magical reveal with sparkles
       setShowMagicalReveal(true);
@@ -299,7 +287,7 @@ const JigsawPuzzle = () => {
       <div className="max-w-7xl mx-auto text-center relative z-10">
         <div className="mb-8 md:mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 font-thai">
-            จิ๊กซอว์ความทรงจำ 🧩
+            เกมจิ๊กซอว์ความทรงจำ 🧩
           </h2>
           <div className="flex justify-center space-x-2 mb-4">
             {['🧩', '💕', '🌸', '💖', '🧩'].map((emoji, i) => (
@@ -370,42 +358,7 @@ const JigsawPuzzle = () => {
           </div>
         </div>
 
-        {/* Test Buttons (for debugging) */}
-        <div className="mb-4 text-center space-x-2">
-          <button
-            onClick={() => {
-              console.log('🧪 Manual completion test triggered');
-              setShowMagicalReveal(true);
-              playCompletionSound();
-              setTimeout(() => setShowSeamlessImage(true), 1000);
-              setTimeout(() => {
-                setShowCelebration(true);
-                setIsComplete(true);
-                setShowMagicalReveal(false);
-              }, 2500);
-            }}
-            className="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600 transition-colors"
-          >
-            🧪 ตัวอย่างถ้าเสร็จแล้วเป็นงี้นะ
-          </button>
-          <button
-            onClick={() => {
-              console.log('🧪 Auto-placing all pieces');
-              const frameSize = isMobile ? 240 : 300;
-              const frameOffset = isMobile ? frameSize/2 : 150;
 
-              setPieces(prev => prev.map(piece => ({
-                ...piece,
-                x: piece.correctX + (isMobile ? 120 : 250) - frameOffset,
-                y: piece.correctY + (isMobile ? 120 : 100) - frameOffset,
-                placed: true
-              })));
-            }}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600 transition-colors"
-          >
-            🧩 เฉลยค้าบบบ
-          </button>
-        </div>
 
         <div className={`relative w-full mx-auto ${isMobile ? 'max-w-sm' : 'max-w-6xl'}`}>
           {/* Magical Reveal Overlay */}
@@ -498,6 +451,11 @@ const JigsawPuzzle = () => {
                   <div className="absolute -top-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.2s'}}>✨</div>
                   <div className="absolute -bottom-2 -right-2 text-4xl animate-bounce" style={{animationDelay: '0.4s'}}>🎊</div>
                   <div className="absolute -bottom-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.6s'}}>🧩</div>
+
+                  {/* Extra floating decorations */}
+                  <div className="absolute top-1/2 -left-8 text-2xl animate-float">💖</div>
+                  <div className="absolute top-1/2 -right-8 text-2xl animate-float" style={{animationDelay: '0.8s'}}>💝</div>
+                  <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl animate-spin-slow">🌟</div>
                 </div>
 
                 {/* Floating sparkles */}
@@ -507,27 +465,30 @@ const JigsawPuzzle = () => {
                 <div className="absolute bottom-4 right-4 text-2xl animate-bounce" style={{animationDelay: '0.9s'}}>🎉</div>
 
                 <div className="text-6xl md:text-8xl mb-4 animate-pulse">🏆</div>
-                <h2 className="text-2xl md:text-3xl font-bold text-purple-600 mb-4 animate-slideInUp">
-                  ตัวอย่าง 🎉
+                <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-4 animate-slideInUp font-thai">
+                  🎉 เยี่ยมมาก! เสร็จแล้ว! 🎉
                 </h2>
-                <p className="text-gray-600 mb-6 text-sm md:text-base animate-slideInUp" style={{animationDelay: '0.2s'}}>
-                  เก่งมากเลยแมวจ๋อง 😸 {gridSize}×{gridSize} puzzle! 🧩✨<br/>
+                <p className="text-gray-600 mb-6 text-sm md:text-base animate-slideInUp font-thai" style={{animationDelay: '0.2s'}}>
+                  เก่งมากเลยนะคะ! 😸 ประกอบจิ๊กซอว์ {gridSize}×{gridSize} ชิ้นสำเร็จแล้ว! 🧩✨<br/>
                   <span className="text-purple-500 font-semibold">
-                    ระดับความยาก: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 กลาง' : '😤 ยาก'}
+                    ระดับความยาก: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'}
+                  </span><br/>
+                  <span className="text-pink-500 text-xs md:text-sm">
+                    ความทรงจำสวยงามของเราเสร็จสมบูรณ์แล้ว 💕
                   </span>
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slideInUp" style={{animationDelay: '0.4s'}}>
                   <button
                     onClick={resetPuzzle}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm md:text-base"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm md:text-base font-thai"
                   >
-                    ลองเล่นภาพนี้ 🔄
+                    🔄 เล่นภาพนี้อีกครั้ง
                   </button>
                   <button
                     onClick={changeImage}
-                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm md:text-base"
+                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm md:text-base font-thai"
                   >
-                    สุ่มรูปต่อไป 🎮
+                    🎮 ความทรงจำใหม่
                   </button>
                 </div>
               </div>
@@ -676,6 +637,75 @@ const JigsawPuzzle = () => {
                   {emoji}
                 </span>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Helper Buttons - Centered and Responsive */}
+        <div className="mt-8 mb-8 flex justify-center px-4">
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 md:p-6 shadow-xl border border-purple-200 max-w-2xl w-full">
+            <div className="text-center mb-4">
+              <h3 className="text-base md:text-lg font-semibold text-gray-700 font-thai flex items-center justify-center gap-2">
+                <span className="text-xl">🎮</span>
+                ตัวช่วยเล่นเกม
+                <span className="text-xl">✨</span>
+              </h3>
+              <p className="text-xs md:text-sm text-gray-500 mt-1 font-thai">
+                💡 ใช้เมื่อต้องการความช่วยเหลือหรือดูตัวอย่าง
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+              <button
+                onClick={() => {
+                  setShowMagicalReveal(true);
+                  playCompletionSound();
+                  setTimeout(() => setShowSeamlessImage(true), 1000);
+                  setTimeout(() => {
+                    setShowCelebration(true);
+                    setIsComplete(true);
+                    setShowMagicalReveal(false);
+                  }, 2500);
+                }}
+                className="group bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 text-white px-4 md:px-6 py-3 md:py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex items-center justify-center gap-2">
+                  <span className="text-lg">✨</span>
+                  <span>ดูตัวอย่างเมื่อเสร็จ</span>
+                  <span className="text-lg">🎉</span>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  const frameSize = isMobile ? 240 : 300;
+                  const frameOffset = isMobile ? frameSize/2 : 150;
+
+                  setPieces(prev => prev.map(piece => ({
+                    ...piece,
+                    x: piece.correctX + (isMobile ? 120 : 250) - frameOffset,
+                    y: piece.correctY + (isMobile ? 120 : 100) - frameOffset,
+                    placed: true
+                  })));
+                }}
+                className="group bg-gradient-to-r from-green-400 via-emerald-400 to-green-500 text-white px-4 md:px-6 py-3 md:py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative flex items-center justify-center gap-2">
+                  <span className="text-lg">🧩</span>
+                  <span>เฉลยให้หน่อย</span>
+                  <span className="text-lg">💡</span>
+                </div>
+              </button>
+            </div>
+
+            <div className="mt-4 text-center">
+              <div className="flex justify-center items-center gap-2 text-xs md:text-sm text-gray-400 font-thai">
+                <span>🌟</span>
+                <span>สนุกกับการเล่นจิ๊กซอว์ความทรงจำ</span>
+                <span>💖</span>
+              </div>
             </div>
           </div>
         </div>
