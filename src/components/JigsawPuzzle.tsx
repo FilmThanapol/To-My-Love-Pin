@@ -92,6 +92,10 @@ const JigsawPuzzle = () => {
 
   const handleMove = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     if (draggedPiece !== null) {
+      // Prevent scrolling during drag on mobile
+      e.preventDefault();
+      e.stopPropagation();
+
       // Throttle updates for mobile performance
       const now = Date.now();
       if (isMobile && now - lastMoveTime.current < 16) { // ~60fps
@@ -284,30 +288,44 @@ const JigsawPuzzle = () => {
 
         <div className={`relative w-full mx-auto ${isMobile ? 'max-w-sm' : 'max-w-6xl'}`}>
           {isComplete && (
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-2xl flex items-center justify-center z-20">
-              <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl text-center max-w-sm mx-4 border border-pink-200">
-                <div className="mb-4">
-                  <div className="text-4xl mb-2">🎉</div>
-                  <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2 font-thai">
-                    เสร็จแล้ว!
-                  </h3>
-                  <p className="text-gray-600 font-thai mb-2">ความทรงจำที่สวยงาม</p>
-                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-2 border border-pink-100">
-                    <p className="text-sm text-gray-600 font-thai">
-                      ระดับ: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'} ({gridSize}×{gridSize})
-                    </p>
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+              <div className="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full mx-4 text-center shadow-2xl border-4 border-purple-200 animate-scaleIn">
+                {/* Completed Image Display */}
+                <div className="mb-6 relative">
+                  <div className="w-full max-w-sm mx-auto aspect-square rounded-2xl overflow-hidden shadow-xl border-4 border-purple-100 animate-fadeInScale">
+                    <img
+                      src={selectedImage}
+                      alt="Completed Puzzle"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
+                  <div className="absolute -top-2 -right-2 text-4xl animate-bounce">🎉</div>
+                  <div className="absolute -top-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.2s'}}>✨</div>
+                  <div className="absolute -bottom-2 -right-2 text-4xl animate-bounce" style={{animationDelay: '0.4s'}}>🎊</div>
+                  <div className="absolute -bottom-2 -left-2 text-4xl animate-bounce" style={{animationDelay: '0.6s'}}>🧩</div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+
+                <div className="text-6xl md:text-8xl mb-4 animate-pulse">🏆</div>
+                <h2 className="text-2xl md:text-3xl font-bold text-purple-600 mb-4 font-thai animate-slideInUp">
+                  ยินดีด้วย! 🎊
+                </h2>
+                <p className="text-gray-600 mb-6 font-thai text-sm md:text-base animate-slideInUp" style={{animationDelay: '0.2s'}}>
+                  คุณทำจิ๊กซอว์สำเร็จแล้ว! 🧩✨<br/>
+                  <span className="text-purple-500 font-semibold">
+                    ระดับ: {selectedDifficulty === 'easy' ? '😊 ง่าย' : selectedDifficulty === 'medium' ? '🤔 ปานกลาง' : '😤 ยาก'}
+                    ({gridSize}×{gridSize})
+                  </span>
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slideInUp" style={{animationDelay: '0.4s'}}>
                   <button
                     onClick={changeImage}
-                    className="bg-gradient-to-r from-pink-400 to-purple-400 text-white px-5 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base"
                   >
-                    ภาพใหม่ 🔄
+                    เล่นใหม่ 🔄
                   </button>
                   <button
                     onClick={() => changeDifficulty(selectedDifficulty)}
-                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-5 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm"
+                    className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-thai text-sm md:text-base"
                   >
                     เล่นอีกครั้ง 🎮
                   </button>
@@ -317,7 +335,7 @@ const JigsawPuzzle = () => {
           )}
 
           <div
-            className={`relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-100 rounded-3xl shadow-inner overflow-visible border border-gray-200 ${
+            className={`puzzle-container relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-100 rounded-3xl shadow-inner overflow-visible border border-gray-200 ${
               isMobile ? 'h-[500px] sm:h-[600px]' : 'h-96 md:h-[500px]'
             }`}
             onMouseMove={handleMove}
