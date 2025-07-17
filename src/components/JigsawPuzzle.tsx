@@ -71,13 +71,16 @@ const JigsawPuzzle = () => {
   ];
 
   useEffect(() => {
-    // Check if mobile
+    // Enhanced mobile detection
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const isMobileDevice = window.innerWidth < 768 ||
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        ('ontouchstart' in window);
+      setIsMobile(isMobileDevice);
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener('resize', checkMobile, { passive: true });
 
     // Preload images for better performance
     images.forEach(imageSrc => {
@@ -99,18 +102,28 @@ const JigsawPuzzle = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Cleanup animation frames on unmount
+  useEffect(() => {
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, []);
+
   const initializePuzzle = (size: number) => {
     const totalPieces = size * size;
-    const pieceSize = isMobile ? 240 / size : 300 / size; // Responsive piece size
+    // Optimize piece size for mobile performance
+    const pieceSize = isMobile ? Math.max(60, 240 / size) : 300 / size;
     const initialPieces = [];
 
     for (let i = 0; i < totalPieces; i++) {
       const row = Math.floor(i / size);
       const col = i % size;
 
-      // Mobile-friendly positioning
+      // Mobile-friendly positioning with better distribution
       const scatterArea = isMobile ?
-        { width: 300, height: 400, offsetX: 20, offsetY: 50 } :
+        { width: Math.min(300, window.innerWidth - 40), height: 400, offsetX: 20, offsetY: 50 } :
         { width: 400, height: 300, offsetX: 450, offsetY: 50 };
 
       initialPieces.push({
@@ -130,6 +143,10 @@ const JigsawPuzzle = () => {
     setDraggedPiece(pieceId);
   }, []);
 
+  // Use useRef to store drag position for better performance
+  const dragPosition = useRef({ x: 0, y: 0 });
+  const animationFrameId = useRef<number | null>(null);
+
   const handleMove = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     if (draggedPiece !== null) {
       // Prevent scrolling during drag on mobile
@@ -142,9 +159,9 @@ const JigsawPuzzle = () => {
         document.body.style.touchAction = 'none';
       }
 
-      // Throttle updates for mobile performance
+      // Throttling for better performance
       const now = Date.now();
-      if (isMobile && now - lastMoveTime.current < 16) { // ~60fps
+      if (now - lastMoveTime.current < 16) { // ~60fps
         return;
       }
       lastMoveTime.current = now;
@@ -156,16 +173,35 @@ const JigsawPuzzle = () => {
       const y = clientY - rect.top;
 
       const pieceSize = isMobile ? 240 / gridSize : 300 / gridSize;
+      const newX = x - pieceSize/2;
+      const newY = y - pieceSize/2;
 
-      setPieces(prev => prev.map(piece =>
-        piece.id === draggedPiece
-          ? { ...piece, x: x - pieceSize/2, y: y - pieceSize/2 }
-          : piece
-      ));
+      // Store position in ref to avoid unnecessary re-renders
+      dragPosition.current = { x: newX, y: newY };
+
+      // Cancel previous animation frame
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+
+      // Use requestAnimationFrame for smoother updates
+      animationFrameId.current = requestAnimationFrame(() => {
+        setPieces(prev => prev.map(piece =>
+          piece.id === draggedPiece
+            ? { ...piece, x: dragPosition.current.x, y: dragPosition.current.y }
+            : piece
+        ));
+      });
     }
   }, [draggedPiece, isMobile, gridSize]);
 
   const handleEnd = useCallback(() => {
+    // Clean up animation frame
+    if (animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = null;
+    }
+
     // Restore scrolling on mobile
     document.body.style.overflow = '';
     document.body.style.touchAction = '';
@@ -198,6 +234,8 @@ const JigsawPuzzle = () => {
       setDraggedPiece(null);
     }
   }, [draggedPiece, isMobile]);
+
+
 
   useEffect(() => {
     const totalPieces = gridSize * gridSize;
@@ -641,7 +679,16 @@ const JigsawPuzzle = () => {
             className={`puzzle-container relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-100 rounded-3xl shadow-inner overflow-visible border border-gray-200 ${
               isMobile ? 'h-[500px] sm:h-[600px]' : 'h-96 md:h-[500px]'
             }`}
-            style={{ touchAction: 'none' }}
+            style={{
+              touchAction: 'none',
+              // Mobile-specific optimizations
+              ...(isMobile && {
+                willChange: 'auto',
+                transform: 'translateZ(0)',
+                isolation: 'isolate',
+                contain: 'layout style'
+              })
+            }}
             onMouseMove={handleMove}
             onMouseUp={handleEnd}
             onMouseLeave={handleEnd}
@@ -697,12 +744,23 @@ const JigsawPuzzle = () => {
               const pieceSize = frameSize / gridSize;
               const frameOffset = isMobile ? frameSize/2 : 150;
 
-              return pieces.map((piece) => (
+              // On mobile, prioritize rendering of dragged piece and nearby pieces for better performance
+              const sortedPieces = isMobile ?
+                pieces.sort((a, b) => {
+                  if (a.id === draggedPiece) return -1;
+                  if (b.id === draggedPiece) return 1;
+                  if (a.placed && !b.placed) return 1;
+                  if (!a.placed && b.placed) return -1;
+                  return 0;
+                }) : pieces;
+
+              return sortedPieces.map((piece) => (
                 <div
                   key={piece.id}
-                  className={`jigsaw-piece absolute cursor-move ${
-                    piece.placed ? 'cursor-default' : 'hover:scale-105 active:scale-110'
+                  className={`jigsaw-piece absolute ${
+                    piece.placed ? 'cursor-default' : ''
                   }`}
+                  data-dragging={draggedPiece === piece.id}
                   style={{
                     width: `${pieceSize}px`,
                     height: `${pieceSize}px`,
@@ -713,8 +771,18 @@ const JigsawPuzzle = () => {
                     backgroundPosition: `-${(piece.id % gridSize) * pieceSize}px -${Math.floor(piece.id / gridSize) * pieceSize}px`,
                     zIndex: draggedPiece === piece.id ? 10 : piece.placed ? 5 : 1,
                     transform: draggedPiece === piece.id ? 'scale(1.05)' : 'scale(1)',
-                    willChange: draggedPiece === piece.id ? 'transform' : 'auto',
-                    transition: draggedPiece === piece.id ? 'none' : 'transform 0.2s ease'
+                    willChange: draggedPiece === piece.id ? 'transform, left, top' : 'auto',
+                    transition: draggedPiece === piece.id ? 'none' : 'transform 0.2s ease',
+                    // Mobile-optimized hardware acceleration
+                    ...(isMobile ? {
+                      backfaceVisibility: 'visible',
+                      perspective: 'none',
+                      transformStyle: 'flat'
+                    } : {
+                      backfaceVisibility: 'hidden',
+                      perspective: '1000px',
+                      transformStyle: 'preserve-3d'
+                    })
                   }}
                   onMouseDown={() => {
                     if (!piece.placed) {
@@ -723,7 +791,7 @@ const JigsawPuzzle = () => {
                   }}
                   onTouchStart={(e) => {
                     if (!piece.placed) {
-                      e.preventDefault(); // Only prevent on touch to stop scroll-to-top
+                      e.preventDefault();
                       handleStart(piece.id);
                     }
                   }}

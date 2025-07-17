@@ -121,11 +121,31 @@ body {
 /* Optimize transitions for mobile */
 @media (max-width: 768px) {
   .jigsaw-piece {
-    transition: transform 0.1s ease !important;
+    transition: none !important; /* Disable all transitions on mobile for better performance */
+    transform: translateZ(0) !important; /* Force hardware acceleration */
+    -webkit-transform: translateZ(0) !important;
   }
 
   .jigsaw-piece:hover {
-    transform: none !important; /* Disable hover effects on mobile */
+    transform: translateZ(0) !important; /* Disable hover effects on mobile */
+    -webkit-transform: translateZ(0) !important;
+  }
+
+  .jigsaw-piece:active {
+    transform: translateZ(0) scale(1.02) !important; /* Minimal scale for feedback */
+    -webkit-transform: translateZ(0) scale(1.02) !important;
+  }
+
+  /* Optimize puzzle container for mobile */
+  .puzzle-container {
+    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Reduce visual complexity on mobile */
+  .jigsaw-piece .shadow-lg {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
   }
 }
 
@@ -617,4 +637,230 @@ button, .emoji, [class*="emoji"], h1, h2, h3, h4, h5, h6, p, span, div {
   animation: shimmer 1.5s infinite;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
   background-size: 200% 100%;
+}
+
+/* Jigsaw puzzle performance optimizations */
+.jigsaw-piece {
+  /* Hardware acceleration for smooth dragging */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  /* Optimize for frequent position changes */
+  will-change: transform, left, top;
+  /* Smooth transitions */
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  /* CSS containment for better performance */
+  contain: layout style paint;
+  /* Optimize rendering */
+  isolation: isolate;
+}
+
+.jigsaw-piece:active,
+.jigsaw-piece[data-dragging="true"] {
+  /* Disable transitions during drag for better performance */
+  transition: none !important;
+  /* Ensure hardware acceleration */
+  transform: translateZ(0) scale(1.05);
+  /* Optimize rendering during drag */
+  will-change: transform, left, top;
+}
+
+/* Desktop-specific optimizations - Mobile-like feel */
+@media (min-width: 769px) and (hover: hover) {
+  .jigsaw-piece {
+    /* Mobile-like smooth interactions */
+    will-change: transform !important;
+    contain: layout style paint !important;
+    transform: translateZ(0) !important;
+    cursor: grab !important;
+    /* Smooth transitions like mobile */
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    /* Enable subpixel rendering for smoother movement */
+    transform-style: preserve-3d !important;
+    backface-visibility: hidden !important;
+  }
+
+  .jigsaw-piece:hover {
+    /* Mobile-like hover feedback */
+    transform: translateZ(0) scale(1.01) !important;
+    filter: brightness(1.02) !important;
+    transition: all 0.15s ease-out !important;
+  }
+
+  .jigsaw-piece:active {
+    /* Mobile-like press feedback */
+    transform: translateZ(0) scale(1.02) !important;
+    filter: brightness(1.05) drop-shadow(0 4px 12px rgba(0,0,0,0.2)) !important;
+    cursor: grabbing !important;
+    transition: all 0.1s ease-out !important;
+  }
+
+  .jigsaw-piece[data-dragging="true"] {
+    /* Mobile-like dragging state */
+    cursor: grabbing !important;
+    filter: brightness(1.1) drop-shadow(0 8px 16px rgba(0,0,0,0.3)) !important;
+    z-index: 9999 !important;
+    /* Smooth movement during drag */
+    transition: filter 0.1s ease-out !important;
+  }
+
+  /* Optimize container for desktop */
+  .puzzle-container {
+    /* Enable hardware acceleration */
+    transform: translateZ(0) !important;
+    /* Mobile-like smooth interactions */
+    -webkit-overflow-scrolling: touch !important;
+    /* Better containment */
+    contain: layout style !important;
+  }
+
+  /* Mobile-like button interactions */
+  button {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  button:hover {
+    transform: translateY(-1px) scale(1.02) !important;
+    filter: brightness(1.05) !important;
+  }
+
+  button:active {
+    transform: translateY(0) scale(0.98) !important;
+    filter: brightness(0.95) !important;
+  }
+}
+
+/* Mobile-like ripple effect for desktop */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.jigsaw-piece::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.jigsaw-piece:active::before {
+  width: 100px;
+  height: 100px;
+  animation: ripple 0.6s ease-out;
+}
+
+/* Smooth mobile-like piece movement */
+@media (min-width: 769px) {
+  .jigsaw-piece {
+    /* Add subtle mobile-like bounce */
+    animation: none;
+  }
+
+  .jigsaw-piece:hover {
+    animation: subtle-bounce 0.6s ease-in-out;
+  }
+}
+
+@keyframes subtle-bounce {
+  0%, 100% { transform: translateZ(0) scale(1); }
+  50% { transform: translateZ(0) scale(1.01); }
+}
+
+.jigsaw-piece:active,
+.jigsaw-piece[data-dragging="true"] {
+  /* Disable transitions during drag for better performance */
+  transition: none !important;
+  /* Ensure hardware acceleration */
+  transform: translateZ(0) scale(1.05);
+  /* Optimize rendering during drag */
+  will-change: transform, left, top;
+}
+
+/* Puzzle container optimizations */
+.puzzle-container {
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  /* Optimize for frequent updates */
+  will-change: contents;
+  /* Improve touch responsiveness */
+  touch-action: none;
+  /* Prevent text selection during drag */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Mobile-specific performance optimizations */
+@media (max-width: 768px) {
+  /* Reduce GPU memory usage on mobile */
+  .jigsaw-piece {
+    will-change: transform !important; /* Only transform, not left/top */
+    contain: strict !important; /* Aggressive containment */
+    transform-style: flat !important; /* Disable 3D transforms */
+    perspective: none !important;
+    backface-visibility: visible !important; /* Reduce GPU usage */
+  }
+
+  /* Optimize container for mobile */
+  .puzzle-container {
+    will-change: auto !important; /* Reduce GPU usage */
+    contain: layout style !important;
+    transform: none !important; /* Disable unnecessary transforms */
+  }
+
+  /* Reduce animation complexity */
+  .animate-bounce,
+  .animate-pulse,
+  .animate-spin {
+    animation-duration: 1s !important; /* Faster animations */
+    animation-timing-function: ease-out !important;
+  }
+
+  /* Optimize celebration popup for mobile */
+  .fixed {
+    contain: layout style paint !important;
+  }
+
+  /* Reduce backdrop blur on mobile for better performance */
+  .backdrop-blur-sm,
+  .backdrop-blur-md {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* Optimize gradients on mobile */
+  .bg-gradient-to-br,
+  .bg-gradient-to-r {
+    background-image: none !important;
+    background-color: #f8fafc !important;
+  }
+
+  /* Reduce shadow complexity */
+  .shadow-2xl,
+  .shadow-xl,
+  .shadow-lg {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+  }
+
+  /* Optimize text rendering */
+  * {
+    text-rendering: optimizeSpeed !important;
+    -webkit-font-smoothing: subpixel-antialiased !important;
+  }
 }
